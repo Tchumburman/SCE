@@ -453,7 +453,7 @@ mean_comparisons_server <- function(id) {
       res <- t.test(a, b, paired = TRUE)
     }
     d <- abs(diff(tapply(df$value, df$group, mean))) /
-      sqrt(mean(tapply(df$value, df$group, var)))
+      sqrt(mean(tapply(df$value, df$group, stats::var)))
   
     div(
       style = "padding: 10px; font-size: 0.95rem;",

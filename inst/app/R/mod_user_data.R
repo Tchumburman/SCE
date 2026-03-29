@@ -707,7 +707,7 @@ user_data_server <- function(id) {
           res <- t.test(vals[[1]], vals[[2]])
           sig <- if (res$p.value < 0.05) "alert-success" else "alert-secondary"
           d <- abs(diff(sapply(vals, mean, na.rm = TRUE))) /
-               sqrt(mean(sapply(vals, var, na.rm = TRUE)))
+               sqrt(mean(sapply(vals, stats::var, na.rm = TRUE)))
 
           div(class = paste("alert", sig),
             tags$h5("Welch Two-Sample T-test"),

@@ -439,7 +439,7 @@ scoring_server <- function(id) {
       raw <- f$raw
       resp <- f$responses
       k <- ncol(resp)
-      item_vars <- apply(resp, 2, var)
+      item_vars <- apply(resp, 2, stats::var)
       total_var <- var(raw)
       alpha <- (k / (k - 1)) * (1 - sum(item_vars) / total_var)
       

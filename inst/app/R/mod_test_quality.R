@@ -561,7 +561,7 @@ test_quality_server <- function(id) {
     dat <- MASS::mvrnorm(n, mu = rep(0, k), Sigma = Sigma)
     colnames(dat) <- paste0("Item", seq_len(k))
 
-    item_vars <- apply(dat, 2, var)
+    item_vars <- apply(dat, 2, stats::var)
     total_var <- var(rowSums(dat))
     alpha <- (k / (k - 1)) * (1 - sum(item_vars) / total_var)
 
