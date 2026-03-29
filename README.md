@@ -27,14 +27,14 @@ The app will open in your default browser.
 ### Option 2: Windows Installer
 
 Download the standalone installer from [Releases](https://github.com/Tchumburman/SCE/releases).
-No R installation required — everything is bundled (R-Portable + all packages).
+No R installation required - everything is bundled (R-Portable + all packages).
 
 ## Features
 
-- **65+ interactive modules** covering statistics, machine learning, psychometrics, game theory, and more
+- **65+ interactive modules** covering statistics, machine learning, psychometrics, game theory, AI and more
 - **Dark/light mode toggle** with Solarized color theming
 - **Guided learning mode** with step-by-step explanations and quizzes
-- **Your Data module** — upload your own CSV/Excel data and:
+- **Your Data module** - upload your own CSV/Excel data and:
   - Explore summaries, visualize distributions, and run quick statistical tests
   - Clean data (filter, recode, handle missing values, transform columns) with full undo support
   - Fit linear or logistic regression with diagnostic plots
