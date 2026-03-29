@@ -6,19 +6,28 @@ with guided explanations, interactive simulations, and quizzes.
 
 ## Installation
 
+### Option 1: Install from R
+
+Requires R (≥ 4.1.0). Open R or RStudio and run:
+
 ```r
+# Install the remotes package if you don't have it
 install.packages("remotes")
+
+# Download and install SCE from GitHub
 remotes::install_github("Tchumburman/SCE")
-```
 
-## Usage
-
-```r
+# Launch the app
 library(SCE)
 run_app()
 ```
 
 The app will open in your default browser.
+
+### Option 2: Windows Installer
+
+Download the standalone installer from [Releases](https://github.com/Tchumburman/SCE/releases).
+No R installation required — everything is bundled (R-Portable + all packages).
 
 ## Features
 
