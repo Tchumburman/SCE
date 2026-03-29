@@ -1112,6 +1112,7 @@ game_theory_server <- function(id) {
 
   output$gt_evo_dynamics <- renderPlotly({
     res <- gt_evo_result()
+    req(res)
     gen_seq <- 0:res$gens
     plot_ly() |>
       add_trace(x = gen_seq, y = res$p_vec, type = "scatter", mode = "lines",
@@ -1127,6 +1128,7 @@ game_theory_server <- function(id) {
 
   output$gt_evo_phase <- renderPlotly({
     res <- gt_evo_result()
+    req(res)
     A <- res$A; w <- input$gt_evo_speed
 
     p_seq <- seq(0.01, 0.99, length.out = 100)
@@ -1167,6 +1169,7 @@ game_theory_server <- function(id) {
 
   output$gt_evo_summary <- renderUI({
     res <- gt_evo_result()
+    req(res)
     final_p <- round(res$p_vec[length(res$p_vec)], 3)
 
     parts <- list(
