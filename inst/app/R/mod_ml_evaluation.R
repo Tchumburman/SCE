@@ -358,7 +358,7 @@ ml_evaluation_server <- function(id) {
                           "<br>Train MSE = ", round(sr$train_mse, 4))
     hover_test  <- paste0("Degree = ", degrees,
                           "<br>Test MSE = ", round(sr$test_mse, 4),
-                          if_else(degrees == opt_deg, "<br>\u2b50 Optimal", ""))
+                          ifelse(degrees == opt_deg, "<br>\u2b50 Optimal", ""))
 
     plotly::plot_ly() |>
       plotly::add_trace(
