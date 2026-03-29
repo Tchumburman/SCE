@@ -148,6 +148,114 @@ user_data_ui <- function(id) {
           uiOutput(ns("ud_test_result"))
         )
       )
+    ),
+
+    # ── Tab 5: Data Cleaning ──────────────────────────────────────────
+    nav_panel(
+      "Clean",
+      layout_sidebar(
+        sidebar = sidebar(
+          width = 320,
+          selectInput(ns("ud_clean_action"), "Action",
+            choices = c("Filter rows" = "filter",
+                        "Recode values" = "recode",
+                        "Handle missing" = "missing",
+                        "Convert type" = "convert",
+                        "Transform column" = "transform")),
+          uiOutput(ns("ud_clean_controls")),
+          actionButton(ns("ud_clean_apply"), "Apply", class = "btn-success w-100 mt-2"),
+          tags$hr(),
+          actionButton(ns("ud_clean_undo"), "Undo last change",
+                       class = "btn-outline-warning w-100", icon = icon("rotate-left")),
+          actionButton(ns("ud_clean_reset"), "Reset to original",
+                       class = "btn-outline-danger w-100 mt-1", icon = icon("arrow-rotate-left")),
+          tags$hr(),
+          uiOutput(ns("ud_clean_log"))
+        ),
+        explanation_box(
+          tags$strong("Data Cleaning"),
+          tags$p("Apply common data cleaning operations to your uploaded data. Each change
+                  is tracked and can be undone. The cleaned data flows through to all other tabs."),
+          guide = tags$ol(
+            tags$li("Select an action (filter, recode, handle missing, convert type, or transform)."),
+            tags$li("Configure the options and click 'Apply'."),
+            tags$li("Review the changes in the preview below."),
+            tags$li("Use 'Undo' to step back or 'Reset' to restore the original data.")
+          )
+        ),
+        card(
+          full_screen = TRUE,
+          card_header(uiOutput(ns("ud_clean_header"), inline = TRUE)),
+          div(style = "overflow-x: auto;", tableOutput(ns("ud_clean_preview")))
+        )
+      )
+    ),
+
+    # ── Tab 6: Regression ─────────────────────────────────────────────
+    nav_panel(
+      "Regression",
+      layout_sidebar(
+        sidebar = sidebar(
+          width = 320,
+          selectInput(ns("ud_reg_type"), "Model type",
+            choices = c("Linear regression" = "lm",
+                        "Logistic regression" = "logistic")),
+          uiOutput(ns("ud_reg_controls")),
+          actionButton(ns("ud_reg_go"), "Fit model", class = "btn-success w-100")
+        ),
+        explanation_box(
+          tags$strong("Regression Analysis"),
+          tags$p("Fit a regression model to your data. Linear regression predicts a numeric
+                  outcome from one or more predictors. Logistic regression predicts a binary
+                  (two-level) outcome."),
+          tags$p("Always check the diagnostic plots for assumption violations. The residual
+                  plots should show no obvious patterns (constant spread, approximate normality).
+                  High-leverage points can strongly influence the fitted model."),
+          guide = tags$ol(
+            tags$li("Choose linear or logistic regression."),
+            tags$li("Select the outcome and predictor columns."),
+            tags$li("Click 'Fit model' and review the coefficient table."),
+            tags$li("Check the diagnostic plots for potential issues.")
+          )
+        ),
+        card(
+          full_screen = TRUE,
+          card_header("Model Summary"),
+          uiOutput(ns("ud_reg_summary"))
+        ),
+        layout_column_wrap(width = 1/2,
+          card(full_screen = TRUE, card_header("Residuals vs Fitted"),
+               plotly::plotlyOutput(ns("ud_reg_resid"), height = "320px")),
+          card(full_screen = TRUE, card_header("Q-Q Plot"),
+               plotly::plotlyOutput(ns("ud_reg_qq"), height = "320px"))
+        )
+      )
+    ),
+
+    # ── Tab 7: Report ─────────────────────────────────────────────────
+    nav_panel(
+      "Report",
+      layout_sidebar(
+        sidebar = sidebar(
+          width = 280,
+          tags$p(class = "text-muted small",
+            "Generate a summary report of your data exploration. The report includes
+             dataset overview, descriptive statistics, and any analyses you have run."),
+          checkboxInput(ns("ud_rpt_desc"), "Include descriptive statistics", value = TRUE),
+          checkboxInput(ns("ud_rpt_missing"), "Include missing data summary", value = TRUE),
+          checkboxInput(ns("ud_rpt_viz"), "Include current visualization", value = TRUE),
+          checkboxInput(ns("ud_rpt_test"), "Include test results", value = TRUE),
+          checkboxInput(ns("ud_rpt_reg"), "Include regression results", value = TRUE),
+          tags$hr(),
+          downloadButton(ns("ud_rpt_download"), "Download HTML Report",
+                         class = "btn-success w-100")
+        ),
+        card(
+          full_screen = TRUE,
+          card_header("Report Preview"),
+          uiOutput(ns("ud_rpt_preview"))
+        )
+      )
     )
   )
 )
@@ -734,5 +842,536 @@ user_data_server <- function(id) {
       })
     })
   })
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # Tab 5 — Data Cleaning
+  # ═══════════════════════════════════════════════════════════════════════
+
+  ud_original <- reactiveVal(NULL)   # stash original upload
+  ud_history  <- reactiveVal(list()) # undo stack
+  ud_log      <- reactiveVal(character(0))
+
+  # When data is first uploaded, save a copy as original
+
+  observeEvent(ud(), {
+    if (!is.null(ud()) && is.null(ud_original())) {
+      ud_original(ud())
+    }
+  })
+
+  # Also reset original when a new file is uploaded
+  observeEvent(input$ud_file, {
+    ud_original(NULL)
+    ud_history(list())
+    ud_log(character(0))
+  })
+
+  # Dynamic controls based on selected cleaning action
+  output$ud_clean_controls <- renderUI({
+    req(ud())
+    ns <- session$ns
+    df <- ud()
+    num_cols <- names(df)[sapply(df, is.numeric)]
+    all_cols <- names(df)
+    cat_cols <- setdiff(all_cols, num_cols)
+
+    switch(input$ud_clean_action,
+      "filter" = tagList(
+        selectInput(ns("ud_cl_col"), "Column", choices = all_cols),
+        selectInput(ns("ud_cl_op"), "Condition",
+          choices = c("equals" = "eq", "not equals" = "neq",
+                      "greater than" = "gt", "less than" = "lt",
+                      "contains" = "contains", "is NA" = "isna",
+                      "is not NA" = "notna")),
+        conditionalPanel(ns = ns,
+          condition = "input.ud_cl_op != 'isna' && input.ud_cl_op != 'notna'",
+          textInput(ns("ud_cl_val"), "Value"))
+      ),
+      "recode" = tagList(
+        selectInput(ns("ud_cl_recode_col"), "Column", choices = all_cols),
+        textInput(ns("ud_cl_old_val"), "Old value"),
+        textInput(ns("ud_cl_new_val"), "New value"),
+        tags$small(class = "text-muted", "Replaces exact matches in the selected column.")
+      ),
+      "missing" = tagList(
+        selectInput(ns("ud_cl_na_cols"), "Columns", choices = all_cols, multiple = TRUE,
+                    selected = num_cols[1:min(3, length(num_cols))]),
+        selectInput(ns("ud_cl_na_method"), "Method",
+          choices = c("Drop rows with NA" = "drop",
+                      "Fill with mean" = "mean",
+                      "Fill with median" = "median",
+                      "Fill with mode" = "mode",
+                      "Fill with custom value" = "custom")),
+        conditionalPanel(ns = ns,
+          condition = "input.ud_cl_na_method == 'custom'",
+          textInput(ns("ud_cl_na_custom"), "Custom value"))
+      ),
+      "convert" = tagList(
+        selectInput(ns("ud_cl_conv_col"), "Column", choices = all_cols),
+        selectInput(ns("ud_cl_conv_to"), "Convert to",
+          choices = c("Numeric" = "numeric", "Categorical (factor)" = "factor",
+                      "Character" = "character"))
+      ),
+      "transform" = tagList(
+        selectInput(ns("ud_cl_trans_col"), "Column (numeric)",
+                    choices = if (length(num_cols) > 0) num_cols else ""),
+        selectInput(ns("ud_cl_trans_fn"), "Transformation",
+          choices = c("Log (ln)" = "log", "Log10" = "log10",
+                      "Square root" = "sqrt", "Z-score" = "zscore",
+                      "Min-max (0-1)" = "minmax"))
+      )
+    )
+  })
+
+  # Apply cleaning action
+  observeEvent(input$ud_clean_apply, {
+    req(ud())
+    df <- ud()
+    action <- input$ud_clean_action
+    desc <- ""
+
+    tryCatch({
+      if (action == "filter") {
+        col <- input$ud_cl_col; op <- input$ud_cl_op; val <- input$ud_cl_val
+        req(col)
+        x <- df[[col]]
+        mask <- switch(op,
+          "eq"      = { v <- if (is.numeric(x)) as.numeric(val) else val; x == v },
+          "neq"     = { v <- if (is.numeric(x)) as.numeric(val) else val; x != v },
+          "gt"      = as.numeric(x) > as.numeric(val),
+          "lt"      = as.numeric(x) < as.numeric(val),
+          "contains"= grepl(val, as.character(x), fixed = TRUE),
+          "isna"    = is.na(x),
+          "notna"   = !is.na(x)
+        )
+        mask[is.na(mask)] <- FALSE
+        df <- df[mask, , drop = FALSE]
+        desc <- sprintf("Filter: %s %s %s (%d rows kept)",
+                        col, op, if (op %in% c("isna","notna")) "" else val, nrow(df))
+
+      } else if (action == "recode") {
+        col <- input$ud_cl_recode_col; old_v <- input$ud_cl_old_val; new_v <- input$ud_cl_new_val
+        req(col, nchar(old_v) > 0)
+        n_changed <- sum(as.character(df[[col]]) == old_v, na.rm = TRUE)
+        df[[col]][as.character(df[[col]]) == old_v] <- new_v
+        desc <- sprintf("Recode: %s '%s' -> '%s' (%d values)", col, old_v, new_v, n_changed)
+
+      } else if (action == "missing") {
+        cols <- input$ud_cl_na_cols; method <- input$ud_cl_na_method
+        req(cols)
+        if (method == "drop") {
+          n_before <- nrow(df)
+          df <- df[complete.cases(df[, cols, drop = FALSE]), , drop = FALSE]
+          desc <- sprintf("Drop NA rows in %s (%d rows removed)",
+                          paste(cols, collapse = ", "), n_before - nrow(df))
+        } else {
+          for (cl in cols) {
+            na_idx <- is.na(df[[cl]])
+            if (!any(na_idx)) next
+            fill_val <- switch(method,
+              "mean"   = if (is.numeric(df[[cl]])) mean(df[[cl]], na.rm = TRUE) else NA,
+              "median" = if (is.numeric(df[[cl]])) median(df[[cl]], na.rm = TRUE) else NA,
+              "mode"   = { tt <- table(df[[cl]]); names(tt)[which.max(tt)] },
+              "custom" = input$ud_cl_na_custom
+            )
+            if (!is.na(fill_val)) {
+              if (is.numeric(df[[cl]]) && method != "mode") {
+                df[[cl]][na_idx] <- as.numeric(fill_val)
+              } else {
+                df[[cl]][na_idx] <- fill_val
+              }
+            }
+          }
+          desc <- sprintf("Fill NA in %s with %s", paste(cols, collapse = ", "), method)
+        }
+
+      } else if (action == "convert") {
+        col <- input$ud_cl_conv_col; to <- input$ud_cl_conv_to
+        req(col)
+        df[[col]] <- switch(to,
+          "numeric"   = suppressWarnings(as.numeric(as.character(df[[col]]))),
+          "factor"    = as.factor(df[[col]]),
+          "character" = as.character(df[[col]])
+        )
+        desc <- sprintf("Convert %s to %s", col, to)
+
+      } else if (action == "transform") {
+        col <- input$ud_cl_trans_col; fn <- input$ud_cl_trans_fn
+        req(col, is.numeric(df[[col]]))
+        x <- df[[col]]
+        new_name <- paste0(col, "_", fn)
+        df[[new_name]] <- switch(fn,
+          "log"    = log(x),
+          "log10"  = log10(x),
+          "sqrt"   = sqrt(x),
+          "zscore" = (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE),
+          "minmax" = (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+        )
+        desc <- sprintf("Transform: %s -> %s (%s)", col, new_name, fn)
+      }
+
+      # Save current state to history before applying
+      ud_history(c(ud_history(), list(ud())))
+      ud_log(c(ud_log(), desc))
+      ud(df)
+      showNotification(desc, type = "message", duration = 3)
+
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    })
+  })
+
+  # Undo
+  observeEvent(input$ud_clean_undo, {
+    hist <- ud_history()
+    req(length(hist) > 0)
+    ud(hist[[length(hist)]])
+    ud_history(hist[-length(hist)])
+    lg <- ud_log()
+    ud_log(lg[-length(lg)])
+    showNotification("Undone last change", type = "warning", duration = 2)
+  })
+
+  # Reset
+  observeEvent(input$ud_clean_reset, {
+    req(ud_original())
+    ud(ud_original())
+    ud_history(list())
+    ud_log(character(0))
+    showNotification("Reset to original data", type = "warning", duration = 2)
+  })
+
+  # Cleaning log display
+  output$ud_clean_log <- renderUI({
+    lg <- ud_log()
+    if (length(lg) == 0) return(tags$small(class = "text-muted", "No changes yet."))
+    items <- lapply(rev(lg), function(l) tags$li(class = "small", l))
+    tags$div(
+      tags$strong(class = "small", length(lg), " change(s):"),
+      tags$ol(class = "small ps-3 mb-0", items)
+    )
+  })
+
+  # Clean tab header with row/col counts
+  output$ud_clean_header <- renderUI({
+    df <- ud()
+    if (is.null(df)) return("Data Preview")
+    sprintf("Data Preview (%s rows \u00d7 %s columns)", 
+            format(nrow(df), big.mark = ","), ncol(df))
+  })
+
+  output$ud_clean_preview <- renderTable({
+    req(ud())
+    head(ud(), 100)
+  }, striped = TRUE, hover = TRUE, spacing = "s", width = "100%")
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # Tab 6 — Regression
+  # ═══════════════════════════════════════════════════════════════════════
+
+  ud_reg_fit <- reactiveVal(NULL)
+
+  output$ud_reg_controls <- renderUI({
+    req(ud())
+    ns <- session$ns
+    df <- ud()
+    num_cols <- names(df)[sapply(df, is.numeric)]
+    all_cols <- names(df)
+    cat_cols <- setdiff(all_cols, num_cols)
+
+    if (input$ud_reg_type == "lm") {
+      tagList(
+        selectInput(ns("ud_reg_y"), "Outcome (numeric)", choices = num_cols),
+        selectInput(ns("ud_reg_x"), "Predictors", choices = all_cols, multiple = TRUE)
+      )
+    } else {
+      # Logistic: binary outcome
+      bin_cols <- names(df)[sapply(df, function(x) length(unique(na.omit(x))) == 2)]
+      tagList(
+        selectInput(ns("ud_reg_y_log"), "Outcome (binary, 2 levels)",
+                    choices = if (length(bin_cols) > 0) bin_cols else all_cols),
+        selectInput(ns("ud_reg_x_log"), "Predictors", choices = all_cols, multiple = TRUE)
+      )
+    }
+  })
+
+  observeEvent(input$ud_reg_go, {
+    withProgress(message = "Fitting regression model...", value = 0.1, {
+    req(ud())
+    df <- ud()
+
+    tryCatch({
+      if (input$ud_reg_type == "lm") {
+        y <- input$ud_reg_y; xs <- input$ud_reg_x
+        req(y, length(xs) > 0)
+        xs <- setdiff(xs, y)
+        req(length(xs) > 0)
+        fml <- as.formula(paste0("`", y, "` ~ ", paste0("`", xs, "`", collapse = " + ")))
+        fit <- lm(fml, data = df)
+        ud_reg_fit(list(type = "lm", fit = fit, y = y, xs = xs))
+      } else {
+        y <- input$ud_reg_y_log; xs <- input$ud_reg_x_log
+        req(y, length(xs) > 0)
+        xs <- setdiff(xs, y)
+        req(length(xs) > 0)
+        df[[y]] <- as.factor(df[[y]])
+        fml <- as.formula(paste0("`", y, "` ~ ", paste0("`", xs, "`", collapse = " + ")))
+        fit <- glm(fml, data = df, family = binomial)
+        ud_reg_fit(list(type = "logistic", fit = fit, y = y, xs = xs))
+      }
+      setProgress(1)
+    }, error = function(e) {
+      showNotification(paste("Model error:", e$message), type = "error")
+      ud_reg_fit(NULL)
+    })
+    })
+  })
+
+  output$ud_reg_summary <- renderUI({
+    res <- ud_reg_fit()
+    req(res)
+    fit <- res$fit
+
+    if (res$type == "lm") {
+      s <- summary(fit)
+      coefs <- as.data.frame(s$coefficients)
+      coefs <- cbind(Term = rownames(coefs), coefs)
+      names(coefs) <- c("Term", "Estimate", "Std. Error", "t value", "p value")
+      coefs[, 2:4] <- round(coefs[, 2:4], 4)
+      coefs[, 5] <- format.pval(as.numeric(coefs[, 5]), digits = 3)
+
+      tagList(
+        tags$div(class = "alert alert-info mb-2",
+          sprintf("R\u00b2 = %.4f | Adj. R\u00b2 = %.4f | F(%d, %d) = %.2f | p = %s",
+                  s$r.squared, s$adj.r.squared,
+                  s$fstatistic[2], s$fstatistic[3], s$fstatistic[1],
+                  format.pval(pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3],
+                                 lower.tail = FALSE), digits = 3))
+        ),
+        tags$div(style = "overflow-x: auto;",
+          tags$table(class = "table table-sm table-striped",
+            tags$thead(tags$tr(lapply(names(coefs), tags$th))),
+            tags$tbody(
+              lapply(seq_len(nrow(coefs)), function(i) {
+                tags$tr(lapply(coefs[i, ], function(v) tags$td(as.character(v))))
+              })
+            )
+          )
+        )
+      )
+    } else {
+      s <- summary(fit)
+      coefs <- as.data.frame(s$coefficients)
+      or <- exp(coefs[, 1])
+      ci <- suppressMessages(tryCatch(exp(confint(fit)), error = function(e) NULL))
+      coefs <- cbind(Term = rownames(coefs), coefs)
+      names(coefs) <- c("Term", "Estimate", "Std. Error", "z value", "p value")
+      coefs$OR <- round(or, 3)
+      if (!is.null(ci)) {
+        coefs$"CI low" <- round(ci[, 1], 3)
+        coefs$"CI high" <- round(ci[, 2], 3)
+      }
+      coefs[, 2:4] <- round(coefs[, 2:4], 4)
+      coefs[, 5] <- format.pval(as.numeric(coefs[, 5]), digits = 3)
+
+      # Classification accuracy
+      pred_prob <- predict(fit, type = "response")
+      pred_class <- ifelse(pred_prob > 0.5, levels(fit$model[[1]])[2], levels(fit$model[[1]])[1])
+      acc <- mean(pred_class == as.character(fit$model[[1]]), na.rm = TRUE)
+
+      tagList(
+        tags$div(class = "alert alert-info mb-2",
+          sprintf("AIC = %.1f | Accuracy = %.1f%% | N = %d",
+                  AIC(fit), acc * 100, nrow(fit$model))
+        ),
+        tags$div(style = "overflow-x: auto;",
+          tags$table(class = "table table-sm table-striped",
+            tags$thead(tags$tr(lapply(names(coefs), tags$th))),
+            tags$tbody(
+              lapply(seq_len(nrow(coefs)), function(i) {
+                tags$tr(lapply(coefs[i, ], function(v) tags$td(as.character(v))))
+              })
+            )
+          )
+        )
+      )
+    }
+  })
+
+  output$ud_reg_resid <- plotly::renderPlotly({
+    res <- ud_reg_fit()
+    req(res)
+    fit <- res$fit
+    fv <- fitted(fit)
+    rv <- residuals(fit)
+    plotly::plot_ly() |>
+      plotly::add_markers(x = fv, y = rv,
+        marker = list(color = "rgba(38,139,210,0.5)", size = 5),
+        showlegend = FALSE, hoverinfo = "text",
+        hovertext = sprintf("Fitted: %.3f<br>Residual: %.3f", fv, rv)) |>
+      plotly::layout(
+        shapes = list(list(type = "line", x0 = min(fv), x1 = max(fv),
+                           y0 = 0, y1 = 0, line = list(color = "#dc322f", dash = "dash"))),
+        xaxis = list(title = "Fitted values"),
+        yaxis = list(title = "Residuals"),
+        margin = list(t = 10)) |>
+      plotly::config(displayModeBar = FALSE)
+  })
+
+  output$ud_reg_qq <- plotly::renderPlotly({
+    res <- ud_reg_fit()
+    req(res)
+    r <- residuals(res$fit)
+    qq <- qqnorm(r, plot.it = FALSE)
+    plotly::plot_ly() |>
+      plotly::add_markers(x = qq$x, y = qq$y,
+        marker = list(color = "rgba(38,139,210,0.5)", size = 5),
+        showlegend = FALSE, hoverinfo = "skip") |>
+      plotly::add_trace(x = range(qq$x), y = range(qq$x) * sd(r) + mean(r),
+        type = "scatter", mode = "lines",
+        line = list(color = "#dc322f", dash = "dash"),
+        showlegend = FALSE, hoverinfo = "skip") |>
+      plotly::layout(
+        xaxis = list(title = "Theoretical quantiles"),
+        yaxis = list(title = "Sample quantiles"),
+        margin = list(t = 10)) |>
+      plotly::config(displayModeBar = FALSE)
+  })
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # Tab 7 — Report
+  # ═══════════════════════════════════════════════════════════════════════
+
+  build_report_html <- function() {
+    df <- ud()
+    if (is.null(df)) return("<p>No data loaded.</p>")
+
+    num_cols <- names(df)[sapply(df, is.numeric)]
+    cat_cols <- setdiff(names(df), num_cols)
+    sections <- list()
+
+    # Dataset overview (always included)
+    sections <- c(sections, list(sprintf(
+      "<h2>Dataset Overview</h2>
+       <table class='table table-sm' style='max-width:400px;'>
+       <tr><td><strong>Rows</strong></td><td>%s</td></tr>
+       <tr><td><strong>Columns</strong></td><td>%d</td></tr>
+       <tr><td><strong>Numeric</strong></td><td>%d</td></tr>
+       <tr><td><strong>Categorical</strong></td><td>%d</td></tr>
+       </table>",
+      format(nrow(df), big.mark = ","), ncol(df), length(num_cols), length(cat_cols)
+    )))
+
+    # Descriptive stats
+    if (input$ud_rpt_desc && length(num_cols) > 0) {
+      stats <- lapply(num_cols, function(v) {
+        x <- df[[v]]
+        x <- x[!is.na(x)]
+        data.frame(Variable = v, N = length(x),
+                   Mean = round(mean(x), 3), SD = round(sd(x), 3),
+                   Min = round(min(x), 3), Median = round(median(x), 3),
+                   Max = round(max(x), 3), stringsAsFactors = FALSE)
+      })
+      stats_df <- do.call(rbind, stats)
+      header <- paste0("<tr>", paste0("<th>", names(stats_df), "</th>", collapse = ""), "</tr>")
+      rows <- apply(stats_df, 1, function(r) {
+        paste0("<tr>", paste0("<td>", r, "</td>", collapse = ""), "</tr>")
+      })
+      sections <- c(sections, list(paste0(
+        "<h2>Descriptive Statistics</h2><table class='table table-sm table-striped'>",
+        header, paste(rows, collapse = ""), "</table>"
+      )))
+    }
+
+    # Missing data
+    if (input$ud_rpt_missing) {
+      na_counts <- sapply(df, function(x) sum(is.na(x)))
+      if (any(na_counts > 0)) {
+        na_df <- data.frame(Column = names(na_counts[na_counts > 0]),
+                            Missing = na_counts[na_counts > 0],
+                            Pct = paste0(round(na_counts[na_counts > 0] / nrow(df) * 100, 1), "%"),
+                            stringsAsFactors = FALSE)
+        header <- paste0("<tr>", paste0("<th>", names(na_df), "</th>", collapse = ""), "</tr>")
+        rows <- apply(na_df, 1, function(r) {
+          paste0("<tr>", paste0("<td>", r, "</td>", collapse = ""), "</tr>")
+        })
+        sections <- c(sections, list(paste0(
+          "<h2>Missing Data</h2><table class='table table-sm'>",
+          header, paste(rows, collapse = ""), "</table>"
+        )))
+      } else {
+        sections <- c(sections, list("<h2>Missing Data</h2><p>No missing values found.</p>"))
+      }
+    }
+
+    # Regression results
+    if (input$ud_rpt_reg && !is.null(ud_reg_fit())) {
+      res <- ud_reg_fit()
+      fit <- res$fit
+      s <- summary(fit)
+      if (res$type == "lm") {
+        sections <- c(sections, list(sprintf(
+          "<h2>Regression Results</h2>
+           <p><strong>Model:</strong> %s ~ %s</p>
+           <p>R&sup2; = %.4f | Adj. R&sup2; = %.4f</p>
+           <pre>%s</pre>",
+          res$y, paste(res$xs, collapse = " + "),
+          s$r.squared, s$adj.r.squared,
+          paste(capture.output(print(s$coefficients, digits = 4)), collapse = "\n")
+        )))
+      } else {
+        sections <- c(sections, list(sprintf(
+          "<h2>Logistic Regression Results</h2>
+           <p><strong>Model:</strong> %s ~ %s</p>
+           <p>AIC = %.1f</p>
+           <pre>%s</pre>",
+          res$y, paste(res$xs, collapse = " + "), AIC(fit),
+          paste(capture.output(print(s$coefficients, digits = 4)), collapse = "\n")
+        )))
+      }
+    }
+
+    # Cleaning log
+    lg <- ud_log()
+    if (length(lg) > 0) {
+      items <- paste0("<li>", lg, "</li>", collapse = "")
+      sections <- c(sections, list(paste0(
+        "<h2>Data Cleaning Steps</h2><ol>", items, "</ol>"
+      )))
+    }
+
+    paste0(
+      "<!DOCTYPE html><html><head><meta charset='utf-8'>",
+      "<title>Data Report</title>",
+      "<style>body{font-family:Segoe UI,sans-serif;max-width:800px;margin:2em auto;padding:0 1em;}",
+      "table{border-collapse:collapse;width:100%;margin:1em 0;}",
+      "th,td{border:1px solid #ddd;padding:6px 10px;text-align:left;}",
+      "th{background:#f5f5f5;}pre{background:#f8f8f8;padding:1em;overflow-x:auto;}",
+      "h1{color:#073642;}h2{color:#268bd2;border-bottom:1px solid #eee;padding-bottom:0.3em;}</style></head>",
+      "<body><h1>Statistical Concepts Explorer \u2014 Data Report</h1>",
+      "<p><em>Generated: ", format(Sys.time(), "%Y-%m-%d %H:%M"), "</em></p>",
+      paste(sections, collapse = "\n"),
+      "</body></html>"
+    )
+  }
+
+  output$ud_rpt_preview <- renderUI({
+    req(ud())
+    html <- build_report_html()
+    tags$div(style = "border: 1px solid #ddd; padding: 1em; border-radius: 4px;
+                      max-height: 600px; overflow-y: auto; background: white;",
+      HTML(html)
+    )
+  })
+
+  output$ud_rpt_download <- downloadHandler(
+    filename = function() {
+      paste0("data_report_", format(Sys.Date(), "%Y%m%d"), ".html")
+    },
+    content = function(file) {
+      writeLines(build_report_html(), file)
+    }
+  )
+
   })
 }

@@ -279,6 +279,7 @@ phacking_server <- function(id) {
 
   phack_current <- reactiveVal(NULL)
   observeEvent(input$phack_run, {
+    withProgress(message = "Testing for significance...", value = 0.1, {
     phack_current({
     d <- phack_data(); req(d)
 
@@ -374,6 +375,7 @@ phacking_server <- function(id) {
     list(p = p, stat = stat, test_name = test_name, n = n_used,
          d = d_est, entry = entry)
     })
+    })
   })
 
   output$phack_badge <- renderUI({
@@ -459,6 +461,7 @@ phacking_server <- function(id) {
   # ════════════════════════════════════════════════════════════
   phack_sim_data <- reactiveVal(NULL)
   observeEvent(input$phack_sim_go, {
+    withProgress(message = "Running p-hacking simulation...", value = 0.1, {
     phack_sim_data({
     n_analysts <- input$phack_n_analysts
     n_choices <- input$phack_n_choices
@@ -541,6 +544,7 @@ phacking_server <- function(id) {
     list(p_values = p_values, fpr_by_k = fpr_by_k,
          null_true = null_true, true_d = true_d,
          n_analysts = n_analysts, n_choices = n_choices, n_per = n_per)
+    })
     })
   })
 
@@ -632,6 +636,7 @@ phacking_server <- function(id) {
   # ════════════════════════════════════════════════════════════
   pcurve_data <- reactiveVal(NULL)
   observeEvent(input$pcurve_go, {
+    withProgress(message = "Computing p-curve...", value = 0.1, {
     pcurve_data({
     n_studies <- input$pcurve_n_studies
     n_per <- input$pcurve_n_per
@@ -681,6 +686,7 @@ phacking_server <- function(id) {
 
     list(p_values = p_values, sig = p_values[p_values < 0.05],
          scenario = scenario, n_studies = n_studies)
+    })
     })
   })
 

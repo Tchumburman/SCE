@@ -980,6 +980,7 @@ game_theory_server <- function(id) {
   # ==================================================================
   gt_ipd_result <- reactiveVal(NULL)
   observeEvent(input$gt_ipd_run, {
+    withProgress(message = "Simulating iterated game...", value = 0.1, {
     gt_ipd_result({
     req(length(input$gt_ipd_strats) >= 2)
     strats <- input$gt_ipd_strats
@@ -1013,6 +1014,7 @@ game_theory_server <- function(id) {
 
     total <- rowSums(scores)
     list(scores = scores, total = total, strats = strats, n_rounds = n_rounds)
+    })
     })
   })
 
@@ -1065,6 +1067,7 @@ game_theory_server <- function(id) {
   # ==================================================================
   gt_evo_result <- reactiveVal(NULL)
   observeEvent(input$gt_evo_run, {
+    withProgress(message = "Running evolutionary simulation...", value = 0.1, {
     gt_evo_result({
     g <- game_payoffs[[input$gt_evo_game]]
     A <- g$p1  # Payoff matrix (row player vs column player)
@@ -1103,6 +1106,7 @@ game_theory_server <- function(id) {
 
     list(p_vec = p_vec, gens = gens, p_star = interior_eq, stable = stable,
          A = A, labels = g$row_labels, game = input$gt_evo_game)
+    })
     })
   })
 
@@ -1200,6 +1204,7 @@ game_theory_server <- function(id) {
   gt_tsp <- reactiveValues(cities = NULL, tour = NULL, comparison = NULL)
 
   observeEvent(input$gt_tsp_generate, {
+    withProgress(message = "Generating cities...", value = 0.1, {
     n <- input$gt_tsp_n
     gt_tsp$cities <- data.frame(
       id = seq_len(n),
@@ -1208,6 +1213,7 @@ game_theory_server <- function(id) {
     )
     gt_tsp$tour <- NULL
     gt_tsp$comparison <- NULL
+    })
   })
 
   # Distance between two cities
@@ -1294,6 +1300,7 @@ game_theory_server <- function(id) {
   }
 
   observeEvent(input$gt_tsp_solve, {
+    withProgress(message = "Solving TSP route...", value = 0.1, {
     req(gt_tsp$cities)
     cities <- gt_tsp$cities
     result <- switch(input$gt_tsp_algo,
@@ -1304,9 +1311,11 @@ game_theory_server <- function(id) {
     gt_tsp$tour <- list(
       tour = result$tour, distance = result$distance, algo = input$gt_tsp_algo
     )
+    })
   })
 
   observeEvent(input$gt_tsp_compare, {
+    withProgress(message = "Comparing algorithms...", value = 0.1, {
     req(gt_tsp$cities)
     cities <- gt_tsp$cities
     nn    <- tsp_nearest_neighbor(cities)
@@ -1324,6 +1333,7 @@ game_theory_server <- function(id) {
     gt_tsp$tour <- list(
       tour = tours[[best]]$tour, distance = tours[[best]]$distance, algo = algos[best]
     )
+    })
   })
 
   output$gt_tsp_map <- renderPlotly({
@@ -1395,12 +1405,14 @@ game_theory_server <- function(id) {
   )
 
   observeEvent(input$gt_sm_generate, {
+    withProgress(message = "Generating preferences...", value = 0.1, {
     n <- input$gt_sm_n
     # Random preference lists
     gt_sm$prefs_a <- lapply(seq_len(n), function(i) sample(n))
     gt_sm$prefs_b <- lapply(seq_len(n), function(i) sample(n))
     gt_sm$result <- NULL
     gt_sm$comparison <- NULL
+    })
   })
 
   # Gale-Shapley algorithm with trace
@@ -1474,6 +1486,7 @@ game_theory_server <- function(id) {
   }
 
   observeEvent(input$gt_sm_run, {
+    withProgress(message = "Running stable matching...", value = 0.1, {
     req(gt_sm$prefs_a, gt_sm$prefs_b)
     if (input$gt_sm_side == "A") {
       gt_sm$result <- gale_shapley(gt_sm$prefs_a, gt_sm$prefs_b, "A", "B")
@@ -1481,14 +1494,17 @@ game_theory_server <- function(id) {
       gt_sm$result <- gale_shapley(gt_sm$prefs_b, gt_sm$prefs_a, "B", "A")
     }
     gt_sm$comparison <- NULL
+    })
   })
 
   observeEvent(input$gt_sm_both, {
+    withProgress(message = "Running both algorithms...", value = 0.1, {
     req(gt_sm$prefs_a, gt_sm$prefs_b)
     res_a <- gale_shapley(gt_sm$prefs_a, gt_sm$prefs_b, "A", "B")
     res_b <- gale_shapley(gt_sm$prefs_b, gt_sm$prefs_a, "B", "A")
     gt_sm$result <- res_a
     gt_sm$comparison <- list(a_proposes = res_a, b_proposes = res_b)
+    })
   })
 
   output$gt_sm_pref_a <- renderTable({
@@ -1626,6 +1642,7 @@ game_theory_server <- function(id) {
   })
 
   observeEvent(input$gt_ua_generate, {
+    withProgress(message = "Generating auction...", value = 0.1, {
     n_stu <- input$gt_ua_nstu
     n_uni <- input$gt_ua_nuni
     quota <- input$gt_ua_quota
@@ -1636,6 +1653,7 @@ game_theory_server <- function(id) {
     gt_ua$uni_prefs <- lapply(seq_len(n_uni), function(i) sample(n_stu))
     gt_ua$result <- NULL
     gt_ua$comparison <- NULL
+    })
   })
 
   # Student-proposing GS for many-to-one
@@ -1764,6 +1782,7 @@ game_theory_server <- function(id) {
   }
 
   observeEvent(input$gt_ua_run, {
+    withProgress(message = "Running auction...", value = 0.1, {
     req(gt_ua$stu_prefs, gt_ua$uni_prefs)
     if (input$gt_ua_side == "students") {
       gt_ua$result <- gs_student_proposing(gt_ua$stu_prefs, gt_ua$uni_prefs, gt_ua$quotas)
@@ -1771,14 +1790,17 @@ game_theory_server <- function(id) {
       gt_ua$result <- gs_uni_proposing(gt_ua$stu_prefs, gt_ua$uni_prefs, gt_ua$quotas)
     }
     gt_ua$comparison <- NULL
+    })
   })
 
   observeEvent(input$gt_ua_both, {
+    withProgress(message = "Running both auctions...", value = 0.1, {
     req(gt_ua$stu_prefs, gt_ua$uni_prefs)
     res_s <- gs_student_proposing(gt_ua$stu_prefs, gt_ua$uni_prefs, gt_ua$quotas)
     res_u <- gs_uni_proposing(gt_ua$stu_prefs, gt_ua$uni_prefs, gt_ua$quotas)
     gt_ua$result <- res_s
     gt_ua$comparison <- list(student_proposing = res_s, uni_proposing = res_u)
+    })
   })
 
   output$gt_ua_stu_prefs <- renderTable({
@@ -1965,6 +1987,7 @@ game_theory_server <- function(id) {
 
   # ---- Phase 1: generate sessions, build conflicts, solve ----
   observeEvent(input$gt_et_solve, {
+    withProgress(message = "Solving exam timetable...", value = 0.1, {
     n_mand <- input$gt_et_nmand;  s_mand <- input$gt_et_smand
     n_elec <- input$gt_et_nelec;  s_elec <- input$gt_et_selec
     n_days <- input$gt_et_days;   min_gap <- input$gt_et_gap
@@ -2106,6 +2129,7 @@ game_theory_server <- function(id) {
     gt_et$all_placed     <- all(!is.na(best_asgn))
     gt_et$students       <- NULL
     gt_et$stu_assignments <- NULL
+    })
   })
 
   # ---- Timetable calendar ----

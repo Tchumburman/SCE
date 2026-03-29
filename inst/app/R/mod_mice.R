@@ -287,9 +287,11 @@ mice_server <- function(id) {
   # ── Tab 1 ──────────────────────────────────────────────────────────────────
   miss_data <- reactiveVal(NULL)
   observeEvent(input$mi_mech_go, {
+    withProgress(message = "Simulating missing data...", value = 0.1, {
     miss_data({
     set.seed(sample(9999, 1))
     gen_miss_data(input$mi_n, input$mi_pct_miss, input$mi_mech, input$mi_b)
+    })
     })
   })
 
@@ -338,6 +340,7 @@ mice_server <- function(id) {
   # ── Tab 2: MICE Process ────────────────────────────────────────────────────
   mice_res <- reactiveVal(NULL)
   observeEvent(input$mice_go, {
+    withProgress(message = "Running multiple imputation...", value = 0.1, {
     mice_res({
     set.seed(sample(9999, 1))
     n    <- input$mice_n; pct <- input$mice_pct
@@ -345,6 +348,7 @@ mice_server <- function(id) {
     d    <- gen_miss_data(n, pct, "MAR (at random — depends on X)")
     imps <- mice_impute(d$x, ifelse(d$miss_y, NA_real_, d$y), d$miss_y, m = m, n_iter = ni)
     list(d = d, imps = imps, m = m, ni = ni)
+    })
     })
   })
 
@@ -388,6 +392,7 @@ mice_server <- function(id) {
   # ── Tab 3: Rubin's Rules ───────────────────────────────────────────────────
   rub_res <- reactiveVal(NULL)
   observeEvent(input$rub_go, {
+    withProgress(message = "Applying Rubin's rules...", value = 0.1, {
     rub_res({
     set.seed(sample(9999, 1))
     n   <- input$rub_n; pct <- input$rub_pct
@@ -423,6 +428,7 @@ mice_server <- function(id) {
     list(ests = ests, ses = ses, q_bar = q_bar, pooled_se = pooled_se,
          fmi = fmi, b_cc = b_cc, se_cc = se_cc, b_or = b_or, se_or = se_or,
          true_b = b, m = m)
+    })
     })
   })
 
@@ -468,6 +474,7 @@ mice_server <- function(id) {
   # ── Tab 4: Imputation Quality ──────────────────────────────────────────────
   iq_res <- reactiveVal(NULL)
   observeEvent(input$iq_go, {
+    withProgress(message = "Assessing imputation quality...", value = 0.1, {
     iq_res({
     set.seed(sample(9999, 1))
     n   <- input$iq_n; pct <- input$iq_pct
@@ -498,6 +505,7 @@ mice_server <- function(id) {
 
     list(y = y, miss_y = miss_y, imps = imps, fmi = fmi,
          rho = rho, rho_seq = rho_seq, fmi_seq = fmi_seq)
+    })
     })
   })
 

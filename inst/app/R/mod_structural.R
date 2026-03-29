@@ -241,6 +241,7 @@ structural_server <- function(id) {
   med_data <- reactiveVal(NULL)
   
   observeEvent(input$med_go, {
+    withProgress(message = "Fitting mediation model...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$sem_med_n
     a <- input$sem_med_a; b <- input$sem_med_b; cp <- input$med_c
@@ -248,6 +249,7 @@ structural_server <- function(id) {
     M <- a * X + rnorm(n, 0, sqrt(1 - a^2))
     Y <- cp * X + b * M + rnorm(n, 0, 0.5)
     med_data(list(X = X, M = M, Y = Y, a = a, b = b, cp = cp))
+    })
   })
   
   output$med_path_plot <- renderPlot(bg = "transparent", {
@@ -413,12 +415,14 @@ structural_server <- function(id) {
   mod_data <- reactiveVal(NULL)
   
   observeEvent(input$mod_go, {
+    withProgress(message = "Fitting moderation model...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$mod_n
     X <- rnorm(n)
     W <- rnorm(n)
     Y <- input$mod_b1 * X + input$mod_b2 * W + input$mod_b3 * X * W + rnorm(n, 0, 0.5)
     mod_data(list(X = X, W = W, Y = Y))
+    })
   })
   
   output$mod_plot <- renderPlot(bg = "transparent", {
@@ -558,6 +562,7 @@ structural_server <- function(id) {
   sem_data <- reactiveVal(NULL)
   
   observeEvent(input$sem_go, {
+    withProgress(message = "Fitting structural equation model...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$sem_n
     nf <- input$sem_nfac
@@ -607,6 +612,7 @@ structural_server <- function(id) {
     })
   
     sem_data(list(data = dat, fit_info = fit_info, true_path = path_coef, nfac = nf, nind = ni))
+    })
   })
   
   output$sem_path_plot <- renderPlot(bg = "transparent", {
@@ -708,6 +714,7 @@ structural_server <- function(id) {
   net_data <- reactiveVal(NULL)
 
   observeEvent(input$net_go, {
+    withProgress(message = "Computing network analysis...", value = 0.1, {
     n <- input$net_nodes; p <- input$net_prob; layout <- input$net_layout
     set.seed(sample.int(10000, 1))
 
@@ -729,6 +736,7 @@ structural_server <- function(id) {
 
     net_data(list(g = g, coords = coords, deg = deg, betw = betw,
                   close = close, el = el, n = n))
+    })
   })
 
   output$net_graph <- renderPlotly({

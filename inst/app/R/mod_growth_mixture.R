@@ -286,12 +286,14 @@ growth_mixture_server <- function(id) {
   # ── Tab 1: GMM Basics ─────────────────────────────────────────────────────
   gmm_res <- reactiveVal(NULL)
   observeEvent(input$gmm_basic_go, {
+    withProgress(message = "Fitting growth mixture model...", value = 0.1, {
     gmm_res({
     set.seed(sample(9999, 1))
     d   <- sim_gmm(input$gmm_n_subj, input$gmm_n_time,
                    input$gmm_k_true, input$gmm_sep, input$gmm_resid_sd)
     fit <- fit_gmm_em(d$y, d$times, input$gmm_k_true)
     list(d = d, fit = fit)
+    })
     })
   })
 
@@ -361,6 +363,7 @@ growth_mixture_server <- function(id) {
   # ── Tab 2: Class-Varying Growth ────────────────────────────────────────────
   cvg_data <- reactiveVal(NULL)
   observeEvent(input$cvg_go, {
+    withProgress(message = "Running convergence simulation...", value = 0.1, {
     cvg_data({
     set.seed(sample(9999, 1))
     n     <- input$cvg_n
@@ -393,6 +396,7 @@ growth_mixture_server <- function(id) {
     y  <- rbind(y1, y2)
 
     list(y = y, cls = cls, times = times, mu1 = mu1, mu2 = mu2, T = T, n = n)
+    })
     })
   })
 
@@ -429,6 +433,7 @@ growth_mixture_server <- function(id) {
   # ── Tab 3: Model Selection ─────────────────────────────────────────────────
   gms2_res <- reactiveVal(NULL)
   observeEvent(input$gms2_go, {
+    withProgress(message = "Running scenario analysis...", value = 0.1, {
     gms2_res({
     withProgress(message = "Fitting GMM models...", {
       n  <- input$gms2_n; T <- input$gms2_t
@@ -444,6 +449,7 @@ growth_mixture_server <- function(id) {
                    Entropy = round(fit$entropy, 3))
       })
       list(df = do.call(rbind, results), true_k = Kt)
+    })
     })
     })
   })

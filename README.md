@@ -20,6 +20,19 @@ run_app()
 
 The app will open in your default browser.
 
+## Features
+
+- **65+ interactive modules** covering statistics, machine learning, psychometrics, game theory, and more
+- **Dark/light mode toggle** with Solarized color theming
+- **Guided learning mode** with step-by-step explanations and quizzes
+- **Your Data module** — upload your own CSV/Excel data and:
+  - Explore summaries, visualize distributions, and run quick statistical tests
+  - Clean data (filter, recode, handle missing values, transform columns) with full undo support
+  - Fit linear or logistic regression with diagnostic plots
+  - Generate downloadable HTML reports
+- **Progress indicators** on all heavy computations across 20 modules
+- **Lazy module loading** and memory reclamation for smooth performance
+
 ## Topics Covered
 
 - Descriptive statistics and distributions

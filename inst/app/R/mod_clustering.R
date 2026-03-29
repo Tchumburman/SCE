@@ -188,6 +188,7 @@ clustering_server <- function(id) {
   clv_data <- reactiveVal(NULL)
 
   observeEvent(input$clv_run, {
+    withProgress(message = "Running cluster validation...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     true_k <- input$clv_true_k
     n_per  <- input$clv_n
@@ -226,6 +227,7 @@ clustering_server <- function(id) {
     clv_data(list(df = df, mat = mat, wss = wss, avg_sil = avg_sil,
                   max_k = max_k, true_k = true_k, opt_k = opt_k,
                   sil_opt = sil_opt, km_opt = km_opt))
+    })
   })
 
   output$clv_scatter <- renderPlotly({
@@ -388,6 +390,7 @@ clustering_server <- function(id) {
   hc_data <- reactiveVal(NULL)
 
   observeEvent(input$hc_go, {
+    withProgress(message = "Running hierarchical clustering...", value = 0.1, {
     n <- input$hc_n; k <- input$hc_k; sep <- input$hc_sep
     method <- input$hc_method; cut_k <- input$hc_cut_k
     set.seed(sample.int(10000, 1))
@@ -404,6 +407,7 @@ clustering_server <- function(id) {
 
     hc_data(list(x = x, true = true_label, hc = hc_fit, assigned = assignments,
                  cut_k = cut_k))
+    })
   })
 
   output$hc_dendro <- renderPlot(bg = "transparent", {
@@ -448,6 +452,7 @@ clustering_server <- function(id) {
   da_data <- reactiveVal(NULL)
 
   observeEvent(input$da_go, {
+    withProgress(message = "Running discriminant analysis...", value = 0.1, {
     n <- input$da_n; sep <- input$da_sep
     method <- input$da_method; uneq <- input$da_unequal_cov
     set.seed(sample.int(10000, 1))
@@ -481,6 +486,7 @@ clustering_server <- function(id) {
 
     da_data(list(dat = dat, grid = grid, preds = preds, acc = acc,
                  method = method, xr = xr, yr = yr))
+    })
   })
 
   output$da_plot <- renderPlotly({

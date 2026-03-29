@@ -712,6 +712,7 @@ mod_large_scale_server <- function(id) {
   be_data <- reactiveVal(NULL)
 
   observeEvent(input$be_run, {
+    withProgress(message = "Running bias estimation...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n_bkl    <- input$be_n_booklets
     n_uniq   <- input$be_n_unique
@@ -776,6 +777,7 @@ mod_large_scale_server <- function(id) {
       bkl_results = bkl_results, eq_results = eq_results,
       bkl_length = bkl_length
     ))
+    })
   })
 
   # Chain linking structure diagram (reactive to n_booklets slider only)
@@ -1176,6 +1178,7 @@ mod_large_scale_server <- function(id) {
   ms_data <- reactiveVal(NULL)
 
   observeEvent(input$ms_run, {
+    withProgress(message = "Running multi-stage sampling...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n_items <- input$ms_n_items
     n_bkl   <- input$ms_n_booklets
@@ -1210,6 +1213,7 @@ mod_large_scale_server <- function(id) {
       resp_mat = resp_mat, stud_bkl = stud_bkl,
       n_items = n_items, n_bkl = n_bkl, ipb = ipb, n_stud = n_stud
     ))
+    })
   })
 
   output$ms_booklet_grid <- renderPlot(bg = "transparent", {
@@ -1349,6 +1353,7 @@ mod_large_scale_server <- function(id) {
   pv_result <- reactiveVal(NULL)
   
   observeEvent(input$pv_go, {
+    withProgress(message = "Generating plausible values...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$pv_n; k <- input$pv_items
     npv <- input$pv_npv; rel <- input$pv_reliability
@@ -1384,6 +1389,7 @@ mod_large_scale_server <- function(id) {
       post_mean = post_mean, post_sd = post_sd,
       pv = pv_matrix, npv = npv, n = n
     ))
+    })
   })
   
   output$pv_posterior_plot <- renderPlotly({
@@ -1518,6 +1524,7 @@ mod_large_scale_server <- function(id) {
   jk_result <- reactiveVal(NULL)
   
   observeEvent(input$jk_go, {
+    withProgress(message = "Running jackknife resampling...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$jk_n
     
@@ -1556,6 +1563,7 @@ mod_large_scale_server <- function(id) {
       pseudo = pseudo, jk_est = jk_est, jk_se = jk_se,
       jk_bias = jk_bias, n = n, stat = input$jk_stat
     ))
+    })
   })
   
   output$jk_pseudo_plot <- renderPlotly({
@@ -1648,6 +1656,7 @@ mod_large_scale_server <- function(id) {
   brr_result <- reactiveVal(NULL)
   
   observeEvent(input$brr_go, {
+    withProgress(message = "Running balanced repeated replication...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n_strata <- input$brr_n_strata
     n_per <- input$brr_n_per
@@ -1704,6 +1713,7 @@ mod_large_scale_server <- function(id) {
       theta_full = theta_full, rep_estimates = rep_estimates,
       brr_se = brr_se, n_reps = n_reps, stat = input$brr_stat
     ))
+    })
   })
   
   output$brr_dist_plot <- renderPlotly({
@@ -1799,6 +1809,7 @@ mod_large_scale_server <- function(id) {
   ss_result <- reactiveVal(NULL)
 
   observeEvent(input$ss_run, {
+    withProgress(message = "Running stratified sampling...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n_items  <- input$ss_n_items
     n_judges <- input$ss_n_judges
@@ -1837,6 +1848,7 @@ mod_large_scale_server <- function(id) {
                      cut_score = cut_score, b = b, a = a, n_items = n_items,
                      rp = rp))
     }
+    })
   })
 
   output$ss_ratings <- renderPlot(bg = "transparent", {
@@ -2232,6 +2244,7 @@ mod_large_scale_server <- function(id) {
   tl_data <- reactiveVal(NULL)
 
   observeEvent(input$tl_run, {
+    withProgress(message = "Running test linking...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n_cycles  <- input$tl_n_cycles
     n_trend   <- input$tl_n_trend
@@ -2289,6 +2302,7 @@ mod_large_scale_server <- function(id) {
       link_results  = link_results,
       true_drift    = true_drift
     ))
+    })
   })
 
   output$tl_stability_plot <- renderPlotly({
@@ -2377,6 +2391,7 @@ mod_large_scale_server <- function(id) {
   msat_data <- reactiveVal(NULL)
 
   observeEvent(input$msat_run, {
+    withProgress(message = "Running multistage adaptive test...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n_groups   <- input$msat_n_groups
     n_stud     <- input$msat_n_students
@@ -2457,6 +2472,7 @@ mod_large_scale_server <- function(id) {
       cut_low     = cut_low,
       cut_high    = cut_high
     ))
+    })
   })
 
   output$msat_routing_plot <- renderPlotly({
@@ -2560,6 +2576,7 @@ mod_large_scale_server <- function(id) {
   sw_data <- reactiveVal(NULL)
 
   observeEvent(input$sw_run, {
+    withProgress(message = "Computing survey weights...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n_pop      <- input$sw_n_pop
     n_strata   <- input$sw_n_strata
@@ -2704,6 +2721,7 @@ mod_large_scale_server <- function(id) {
       comparison  = comparison,
       wtd_var     = wtd_var
     ))
+    })
   })
 
   output$sw_dist_plot <- renderPlotly({

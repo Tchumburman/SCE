@@ -253,6 +253,7 @@ sampling_theorems_server <- function(id) {
 
   # Full simulation (instant)
   observeEvent(input$lln_go, {
+    withProgress(message = "Simulating Law of Large Numbers...", value = 0.1, {
     lln_animating(FALSE)
     updateActionButton(session, "lln_animate", label = "\u25b6 Animate")
 
@@ -273,6 +274,7 @@ sampling_theorems_server <- function(id) {
     running_avg <- cumsum(x) / seq_along(x)
     lln_full(list(running_avg = running_avg, true_mean = true_mean, n = n))
     lln_visible_n(n)
+    })
   })
 
   # Animate toggle

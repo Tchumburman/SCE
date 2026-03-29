@@ -148,11 +148,13 @@ ci_resampling_server <- function(id) {
 
   # Instant generation (show all)
   observeEvent(input$ci_go, {
+    withProgress(message = "Generating confidence intervals...", value = 0.1, {
     ci_animating(FALSE)
     updateActionButton(session, "ci_animate", label = "\u25b6 Animate")
     df <- generate_cis()
     ci_all(df)
     ci_show_n(nrow(df))
+    })
   })
 
   # Animate toggle
@@ -259,6 +261,7 @@ ci_resampling_server <- function(id) {
   boot_result <- reactiveVal(NULL)
 
   observeEvent(input$boot_go, {
+    withProgress(message = "Running bootstrap resampling...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     original <- rgamma(input$boot_n, shape = 3, rate = 0.5)
 
@@ -279,6 +282,7 @@ ci_resampling_server <- function(id) {
       observed = stat_fn(original),
       ci       = quantile(boot_stats, c(0.025, 0.975))
     ))
+    })
   })
 
   output$boot_sample_plot <- plotly::renderPlotly({

@@ -404,6 +404,7 @@ ml_server <- function(id) {
   ml_rf_data <- reactiveVal(NULL)
   
   observeEvent(input$ml_rf_go, {
+    withProgress(message = "Training decision tree & random forest...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     dat <- ml_gen_data(input$ml_rf_n, input$ml_rf_noise, "Concentric circles")
     tree_fit <- rpart::rpart(y ~ x1 + x2, data = dat, method = "class",
@@ -413,6 +414,7 @@ ml_server <- function(id) {
                                  ntree = input$ml_rf_trees)
     }, error = function(e) NULL)
     ml_rf_data(list(data = dat, tree = tree_fit, rf = rf_fit))
+    })
   })
   
   output$ml_tree_plot <- plotly::renderPlotly({
@@ -432,6 +434,7 @@ ml_server <- function(id) {
   ml_knn_data <- reactiveVal(NULL)
   
   observeEvent(input$ml_knn_go, {
+    withProgress(message = "Fitting KNN & SVM...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     dat <- ml_gen_data(input$ml_knn_n, 0.5, "XOR")
 
@@ -446,6 +449,7 @@ ml_server <- function(id) {
     )
     ml_knn_data(list(data = dat, knn = knn_model, svm = svm_fit,
                      knn_predict = knn_predict))
+    })
   })
   
   output$ml_knn_plot <- plotly::renderPlotly({
@@ -467,6 +471,7 @@ ml_server <- function(id) {
   ml_nn_data <- reactiveVal(NULL)
   
   observeEvent(input$ml_nn_go, {
+    withProgress(message = "Training neural network...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     dat <- ml_gen_data(input$ml_nn_n, 0.5, input$ml_nn_data)
     nn_fit <- tryCatch(
@@ -475,6 +480,7 @@ ml_server <- function(id) {
       error = function(e) NULL
     )
     ml_nn_data(list(data = dat, nn = nn_fit))
+    })
   })
   
   output$ml_nn_plot <- plotly::renderPlotly({
@@ -488,6 +494,7 @@ ml_server <- function(id) {
   ml_km_data <- reactiveVal(NULL)
   
   observeEvent(input$ml_km_go, {
+    withProgress(message = "Running k-means clustering...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$ml_km_n; k_true <- input$ml_km_k; sp <- input$ml_km_spread
     centers <- matrix(rnorm(k_true * 2, 0, 3), k_true, 2)
@@ -499,6 +506,7 @@ ml_server <- function(id) {
     km <- kmeans(dat[, 1:2], centers = input$ml_km_kfit, nstart = 10)
     dat$km_cluster <- factor(km$cluster)
     ml_km_data(list(data = dat, km = km))
+    })
   })
   
   output$ml_km_true <- plotly::renderPlotly({

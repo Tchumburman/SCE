@@ -279,6 +279,7 @@ complex_power_server <- function(id) {
   })
 
   observeEvent(input$cp_ml_go, {
+    withProgress(message = "Simulating multilevel power...", value = 0.1, {
     output$cp_ml_power_gauge <- renderUI(power_gauge(cp_ml_reactive()$pwr))
     output$cp_ml_deff <- renderUI({
       d <- cp_ml_reactive()$deff
@@ -297,6 +298,7 @@ complex_power_server <- function(id) {
         tags$p(style = "font-size: 0.82rem;",
           sprintf("Total N = %d, DEFF = %.2f", r$N, r$deff))
       )
+    })
     })
   })
 
@@ -328,6 +330,7 @@ complex_power_server <- function(id) {
   # ── Tab 2: Mediation Power ─────────────────────────────────────────────────
   cp_med_sim <- reactiveVal(NULL)
   observeEvent(input$cp_med_go, {
+    withProgress(message = "Simulating mediation power...", value = 0.1, {
     cp_med_sim({
     a    <- input$cp_med_a; b <- input$cp_med_b
     cp   <- input$cp_med_cp; n <- input$cp_med_n
@@ -365,6 +368,7 @@ complex_power_server <- function(id) {
 
     list(ab_dist = ab_dist, a = a, b = b, pwr_sim = pwr_sim,
          pwr_sobel = pwr_sobel, ci = ci, true_ab = a * b)
+    })
     })
   })
 

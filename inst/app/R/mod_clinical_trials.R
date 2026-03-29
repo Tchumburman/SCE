@@ -305,6 +305,7 @@ clinical_trials_server <- function(id) {
   # ── Tab 1: Randomisation ───────────────────────────────────────────────────
   ct_alloc <- reactiveVal(NULL)
   observeEvent(input$ct_rand_go, {
+    withProgress(message = "Running randomisation...", value = 0.1, {
     ct_alloc({
     set.seed(sample(9999, 1))
     N   <- input$ct_n
@@ -345,6 +346,7 @@ clinical_trials_server <- function(id) {
       }
     )
     alloc
+    })
     })
   })
 
@@ -389,6 +391,7 @@ clinical_trials_server <- function(id) {
   # ── Tab 2: Blinding & Bias ─────────────────────────────────────────────────
   ct_bias_sim <- reactiveVal(NULL)
   observeEvent(input$ct_bias_go, {
+    withProgress(message = "Simulating allocation bias...", value = 0.1, {
     ct_bias_sim({
     set.seed(sample(9999, 1))
     n  <- input$ct_bias_n; d_true <- input$ct_true_d
@@ -410,6 +413,7 @@ clinical_trials_server <- function(id) {
     list(d_true = d_true, d_biased = d_biased,
          d_cc = d_cc, d_unbiased = d_unbiased,
          pb = pb, db = db, ab = ab)
+    })
     })
   })
 
@@ -465,6 +469,7 @@ clinical_trials_server <- function(id) {
   # ── Tab 3: Adaptive Designs ────────────────────────────────────────────────
   ct_adapt_sim <- reactiveVal(NULL)
   observeEvent(input$ct_adapt_go, {
+    withProgress(message = "Running adaptive trial...", value = 0.1, {
     ct_adapt_sim({
     set.seed(sample(9999, 1))
     n_init <- input$ct_adapt_n_init; d_true <- input$ct_adapt_d_true
@@ -524,6 +529,7 @@ clinical_trials_server <- function(id) {
            avg_n = n_init * 2)
     }
     })
+    })
   })
 
   output$ct_adapt_plot <- renderPlotly({
@@ -567,6 +573,7 @@ clinical_trials_server <- function(id) {
   # ── Tab 4: CONSORT Flow ────────────────────────────────────────────────────
   ct_consort <- reactiveVal(NULL)
   observeEvent(input$ct_consort_go, {
+    withProgress(message = "Generating CONSORT flow...", value = 0.1, {
     ct_consort({
     enrolled  <- input$ct_consort_enrolled
     excl_rate <- input$ct_consort_excluded / 100
@@ -590,6 +597,7 @@ clinical_trials_server <- function(id) {
          comp_t = comp_t, comp_c = comp_c,
          itt_t = itt_t, itt_c = itt_c,
          pp_t = pp_t, pp_c = pp_c)
+    })
     })
   })
 

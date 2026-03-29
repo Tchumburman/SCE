@@ -267,6 +267,7 @@ dim_reduction_server <- function(id) {
   pca_result <- reactiveVal(NULL)
   
   observeEvent(input$pca_go, {
+    withProgress(message = "Running PCA...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$pca_n; p <- input$pca_vars; k <- input$pca_factors
     factors <- matrix(rnorm(n * k), n, k)
@@ -283,6 +284,7 @@ dim_reduction_server <- function(id) {
 
     pc <- prcomp(data, scale. = TRUE)
     pca_result(list(pc = pc, data = data))
+    })
   })
   
   output$pca_scree <- plotly::renderPlotly({
@@ -409,6 +411,7 @@ dim_reduction_server <- function(id) {
   fa_unrotated <- reactiveVal(NULL)
   
   observeEvent(input$fa_go, {
+    withProgress(message = "Running factor analysis...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     n <- input$fa_n; p <- input$fa_vars; k <- input$fa_k
     cl <- input$fa_crossload
@@ -445,6 +448,7 @@ dim_reduction_server <- function(id) {
       error = function(e) { message("FA error: ", e$message); NULL }
     )
     fa_result(list(fit = fit, data = data, k = k, rotation = rotation))
+    })
   })
   
   output$fa_heatmap <- plotly::renderPlotly({
@@ -713,6 +717,7 @@ dim_reduction_server <- function(id) {
   mds_result <- reactiveVal(NULL)
 
   observeEvent(input$mds_run, {
+    withProgress(message = "Computing multidimensional scaling...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     data_type <- input$mds_data
 
@@ -762,6 +767,7 @@ dim_reduction_server <- function(id) {
     mds_result(list(coords = fit, labels = labels, group = group,
                     orig_d = orig_d, mds_d = mds_d, stress = stress,
                     method = input$mds_method))
+    })
   })
 
   output$mds_scatter <- renderPlotly({
@@ -891,6 +897,7 @@ dim_reduction_server <- function(id) {
   ca_data <- reactiveVal(NULL)
 
   observeEvent(input$ca_go, {
+    withProgress(message = "Running correspondence analysis...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     tbl <- switch(input$ca_data,
       "hair" = {
@@ -938,6 +945,7 @@ dim_reduction_server <- function(id) {
     ca_data(list(row_coords = row_coords, col_coords = col_coords,
                  inertia = inertia[seq_len(ndim)],
                  total_inertia = total_inertia))
+    })
   })
 
   output$ca_biplot <- renderPlotly({

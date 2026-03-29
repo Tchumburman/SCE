@@ -734,6 +734,7 @@ irt_models_server <- function(id) {
   pirt_result <- reactiveVal(NULL)
 
   observeEvent(input$pirt_go, {
+    withProgress(message = "Fitting polytomous IRT model...", value = 0.1, {
     model <- input$pirt_model
     K <- input$pirt_cats
     a <- input$pirt_disc
@@ -772,6 +773,7 @@ irt_models_server <- function(id) {
     info <- as.numeric(E2 - E^2)
 
     pirt_result(list(theta = theta, P = P, info = info, K = K, model = model))
+    })
   })
 
   output$pirt_crc <- renderPlotly({
@@ -823,6 +825,7 @@ irt_models_server <- function(id) {
   mirt_data <- reactiveVal(NULL)
 
   observeEvent(input$mirt_go, {
+    withProgress(message = "Fitting multidimensional IRT...", value = 0.1, {
     J <- input$mirt_items
     a1_focal <- input$mirt_a1; a2_focal <- input$mirt_a2
     rho <- input$mirt_corr
@@ -842,6 +845,7 @@ irt_models_server <- function(id) {
 
     mdisc <- sqrt(a1^2 + a2^2)
     mirt_data(list(a1 = a1, a2 = a2, d = d, mdisc = mdisc, J = J, rho = rho))
+    })
   })
 
   output$mirt_vectors <- renderPlotly({
@@ -930,6 +934,7 @@ irt_models_server <- function(id) {
   nom_data <- reactiveVal(NULL)
 
   observeEvent(input$nom_go, {
+    withProgress(message = "Fitting nominal response model...", value = 0.1, {
     K <- input$nom_cats
     a_correct <- input$nom_a_correct
     a_attract <- input$nom_a_attract
@@ -949,6 +954,7 @@ irt_models_server <- function(id) {
 
     nom_data(list(theta = theta, P = P, a = a, c = c_param,
                   labels = labels, K = K))
+    })
   })
 
   output$nom_occ <- renderPlotly({
@@ -991,6 +997,7 @@ irt_models_server <- function(id) {
   birt_data <- reactiveVal(NULL)
 
   observeEvent(input$birt_go, {
+    withProgress(message = "Running Bayesian IRT...", value = 0.1, {
     J <- input$birt_items
     true_theta <- input$birt_true_theta
     prior_type <- input$birt_prior
@@ -1028,6 +1035,7 @@ irt_models_server <- function(id) {
     birt_data(list(theta_grid = theta_grid, prior = prior, lik = lik,
                    posterior = posterior, eap = eap, map = map, mle = mle,
                    psd = psd, true = true_theta, score = sum(x), J = J))
+    })
   })
 
   output$birt_plot <- renderPlotly({
@@ -1224,6 +1232,7 @@ irt_models_server <- function(id) {
   }
 
   observeEvent(input$mcmp_run, {
+    withProgress(message = "Running parameter recovery...", value = 0.1, {
     set.seed(sample(1:10000, 1))
     N <- input$mcmp_n; K <- input$mcmp_k
     true_mod <- input$mcmp_true_model
@@ -1287,6 +1296,7 @@ irt_models_server <- function(id) {
       a_true = a_true, b_true = b_true, c_true = c_true,
       fit_1pl = fit_1pl, fit_2pl = fit_2pl, fit_3pl = fit_3pl
     ))
+    })
   })
 
   output$mcmp_item_selector <- renderUI({

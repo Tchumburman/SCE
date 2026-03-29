@@ -205,6 +205,7 @@ sequential_testing_server <- function(id) {
   # ── Tab 1: SPRT ────────────────────────────────────────────────────────────
   sprt_res <- reactiveVal(NULL)
   observeEvent(input$sprt_go, {
+    withProgress(message = "Running SPRT simulation...", value = 0.1, {
     sprt_res({
     set.seed(sample(9999, 1))
     mu0 <- input$sprt_h0; mu1 <- input$sprt_h1
@@ -240,6 +241,7 @@ sequential_testing_server <- function(id) {
     }
     list(paths = all_paths, decisions = decisions, stop_ns = stop_ns,
          log_A = log_A, log_B = log_B, mu = mu, mu0 = mu0, mu1 = mu1)
+    })
     })
   })
 
@@ -304,6 +306,7 @@ sequential_testing_server <- function(id) {
   # ── Tab 2: Group-Sequential ────────────────────────────────────────────────
   gs_res <- reactiveVal(NULL)
   observeEvent(input$gs_go, {
+    withProgress(message = "Running group sequential design...", value = 0.1, {
     gs_res({
     set.seed(sample(9999, 1))
     N    <- input$gs_n_total; K <- input$gs_k_looks
@@ -367,6 +370,7 @@ sequential_testing_server <- function(id) {
          power = mean(stopped), avg_n = mean(ifelse(stopped, rejected_at, N)),
          des = des)
     })
+    })
   })
 
   output$gs_boundaries <- renderPlotly({
@@ -412,6 +416,7 @@ sequential_testing_server <- function(id) {
   # ── Tab 3: Always-Valid ────────────────────────────────────────────────────
   av_res <- reactiveVal(NULL)
   observeEvent(input$av_go, {
+    withProgress(message = "Running adaptive validation...", value = 0.1, {
     av_res({
     set.seed(sample(9999, 1))
     N    <- input$av_n_max; d <- input$av_true_d
@@ -450,6 +455,7 @@ sequential_testing_server <- function(id) {
 
     list(paths = ev_paths, ev_stop = ev_stop, naive_stop = naive_stop,
          threshold = threshold, alph = alph, d = d, N = N, nsim = nsim)
+    })
     })
   })
 

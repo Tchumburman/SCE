@@ -324,11 +324,13 @@ lca_server <- function(id) {
   # ── Tab 1: LCA Basics ─────────────────────────────────────────────────────
   lca_fit <- reactiveVal(NULL)
   observeEvent(input$lca_go, {
+    withProgress(message = "Fitting latent class model...", value = 0.1, {
     lca_fit({
     n <- input$lca_n; K <- input$lca_k; J <- input$lca_items; sep <- input$lca_sep
     d <- sim_lca_data(n, K, J, sep, seed = sample(9999, 1))
     fit <- fit_lca_em(d$X, K)
     list(d = d, fit = fit, K = K, J = J)
+    })
     })
   })
 
@@ -398,6 +400,7 @@ lca_server <- function(id) {
   # ── Tab 2: Model Selection ─────────────────────────────────────────────────
   lca_sel_results <- reactiveVal(NULL)
   observeEvent(input$lca_sel_go, {
+    withProgress(message = "Comparing models...", value = 0.1, {
     lca_sel_results({
     withProgress(message = "Fitting LCA models...", {
       n   <- input$lca_sel_n
@@ -415,6 +418,7 @@ lca_server <- function(id) {
                    Entropy = fit$entropy, LogLik = fit$loglik)
       })
       list(df = do.call(rbind, results), true_k = K_t)
+    })
     })
     })
   })
@@ -461,6 +465,7 @@ lca_server <- function(id) {
   # ── Tab 3: Gaussian Mixture Model ─────────────────────────────────────────
   gmm_fit <- reactiveVal(NULL)
   observeEvent(input$gmm_go, {
+    withProgress(message = "Fitting Gaussian mixture...", value = 0.1, {
     gmm_fit({
     set.seed(sample(9999, 1))
     n   <- input$gmm_n
@@ -496,6 +501,7 @@ lca_server <- function(id) {
     list(x = x, cls = cls, K = K,
          mu = mu_e, sd = sd_e, pi = pi_e, R = R,
          mu_true = mus, sd_true = sds)
+    })
     })
   })
 
@@ -566,6 +572,7 @@ lca_server <- function(id) {
   # ── Tab 4: LCA vs K-Means ─────────────────────────────────────────────────
   lcakm_fit <- reactiveVal(NULL)
   observeEvent(input$lcavkm_go, {
+    withProgress(message = "Comparing LCA vs K-means...", value = 0.1, {
     lcakm_fit({
     set.seed(sample(9999, 1))
     n   <- input$lcavkm_n
@@ -580,6 +587,7 @@ lca_server <- function(id) {
     list(d = d, lca = lca, km = km, K = K, J = J,
          ari_lca = ari(d$class_true, lca$class_est),
          ari_km  = ari(d$class_true, km$cluster))
+    })
     })
   })
 

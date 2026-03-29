@@ -247,6 +247,7 @@ ml_evaluation_server <- function(id) {
   sim_results <- reactiveVal(NULL)
 
   observeEvent(input$bv_run, {
+    withProgress(message = "Computing bias-variance decomposition...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n     <- input$bv_n_train
     sig   <- input$bv_noise
@@ -287,6 +288,7 @@ ml_evaluation_server <- function(id) {
       test_mse  = colMeans(test_mse),
       chosen_d = chosen_d, max_d = max_d
     ))
+    })
   })
 
   output$bv_fits_plot <- renderPlotly({
@@ -399,6 +401,7 @@ ml_evaluation_server <- function(id) {
   cv_data <- reactiveVal(NULL)
 
   observeEvent(input$cv_run, {
+    withProgress(message = "Running cross-validation...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n <- input$cv_n
 
@@ -447,6 +450,7 @@ ml_evaluation_server <- function(id) {
       cv_by_degree = cv_by_degree, degree = degree,
       method = method
     ))
+    })
   })
 
   output$cv_folds_plot <- renderPlotly({
@@ -623,6 +627,7 @@ ml_evaluation_server <- function(id) {
   dat <- reactiveVal(NULL)
 
   observeEvent(input$roc_gen, {
+    withProgress(message = "Generating ROC curves...", value = 0.1, {
     set.seed(sample.int(10000, 1))
     n    <- input$roc_n
     prev <- input$roc_prev / 100
@@ -662,6 +667,7 @@ ml_evaluation_server <- function(id) {
     auc <- sum(diff(roc_sorted$fpr) * (roc_sorted$tpr[-1] + roc_sorted$tpr[-nrow(roc_sorted)]) / 2)
 
     dat(list(df = df, roc_df = roc_df, auc = abs(auc)))
+    })
   })
 
   output$roc_scores <- renderPlotly({
@@ -816,6 +822,7 @@ ml_evaluation_server <- function(id) {
   gd_result <- reactiveVal(NULL)
 
   observeEvent(input$gd_run, {
+    withProgress(message = "Running grid search...", value = 0.1, {
     surface <- input$gd_surface
     lr    <- input$gd_lr
     steps <- input$gd_steps
@@ -866,6 +873,7 @@ ml_evaluation_server <- function(id) {
 
     gd_result(list(path = path, losses = losses, xg = xg, yg = yg, zmat = zmat,
                    xrng = xrng, yrng = yrng, surface = surface))
+    })
   })
 
   output$gd_contour <- renderPlotly({

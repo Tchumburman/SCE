@@ -484,6 +484,7 @@ bayesian_workflow_server <- function(id) {
 
   bw_mcmc_data <- reactiveVal(NULL)
   observeEvent(input$bw_mcmc_run, {
+    withProgress(message = "Running MCMC sampler...", value = 0.1, {
     bw_mcmc_data({
     target  <- input$bw_mcmc_target
     prop_sd <- input$bw_mcmc_proposal_sd
@@ -531,6 +532,7 @@ bayesian_workflow_server <- function(id) {
     list(chain = chain, post_chain = post_chain, target = target,
          acc_rate = acc_rate, n_iter = n_iter, burnin = burnin,
          prop_sd = prop_sd, ess = ess, ac1 = ac1)
+    })
     })
   })
 
@@ -637,6 +639,7 @@ bayesian_workflow_server <- function(id) {
 
   bw_ppc_data <- reactiveVal(NULL)
   observeEvent(input$bw_ppc_run, {
+    withProgress(message = "Running posterior predictive check...", value = 0.1, {
     bw_ppc_data({
     true_model <- input$bw_ppc_true_model
     fit_model  <- input$bw_ppc_fit_model
@@ -688,6 +691,7 @@ bayesian_workflow_server <- function(id) {
          obs_mean = obs_mean, obs_sd = obs_sd,
          rep_means = rep_means, rep_sds = rep_sds,
          pval_mean = pval_mean, pval_sd = pval_sd)
+    })
     })
   })
 
@@ -830,6 +834,7 @@ bayesian_workflow_server <- function(id) {
 
   bw_ci_data <- reactiveVal(NULL)
   observeEvent(input$bw_ci_run, {
+    withProgress(message = "Computing credible intervals...", value = 0.1, {
     bw_ci_data({
     true_p <- input$bw_ci_true_p
     n      <- input$bw_ci_n
@@ -876,6 +881,7 @@ bayesian_workflow_server <- function(id) {
 
     list(df = df, true_p = true_p, n = n, nsims = nsims,
          level = level, prior = prior)
+    })
     })
   })
 
@@ -997,6 +1003,7 @@ bayesian_workflow_server <- function(id) {
 
   bmc_res <- reactiveVal(NULL)
   observeEvent(input$bmc_go, {
+    withProgress(message = "Comparing models...", value = 0.1, {
     bmc_res({
     set.seed(sample(9999, 1))
     n       <- input$bmc_n
@@ -1058,6 +1065,7 @@ bayesian_workflow_server <- function(id) {
          bic0 = BIC(m0), bic1 = BIC(m1),
          aic0 = AIC(m0), aic1 = AIC(m1),
          lbl0 = lbl0, lbl1 = lbl1)
+    })
     })
   })
 

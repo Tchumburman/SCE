@@ -289,6 +289,7 @@ monte_carlo_server <- function(id) {
 
   mc_perm_data <- reactiveVal(NULL)
   observeEvent(input$mc_perm_run, {
+    withProgress(message = "Running permutation test...", value = 0.1, {
     mc_perm_data({
     n1   <- input$mc_perm_n1
     n2   <- input$mc_perm_n2
@@ -328,9 +329,11 @@ monte_carlo_server <- function(id) {
 
     perm_p <- mean(abs(perm_stats) >= abs(obs_stat))
 
+    setProgress(1)
     list(g1 = g1, g2 = g2, obs_stat = obs_stat,
          ttest = ttest, perm_stats = perm_stats, perm_p = perm_p,
          nperms = nperms, dist = dist)
+    })
     })
   })
 
@@ -439,6 +442,7 @@ monte_carlo_server <- function(id) {
 
   mc_pval_data <- reactiveVal(NULL)
   observeEvent(input$mc_pval_run, {
+    withProgress(message = "Simulating p-values...", value = 0.1, {
     mc_pval_data({
     n      <- input$mc_pval_n
     effect <- input$mc_pval_effect
@@ -453,7 +457,9 @@ monte_carlo_server <- function(id) {
       t.test(g2, g1)$p.value
     })
 
+    setProgress(1)
     list(pvals = pvals, effect = effect, n = n, nsims = nsims, alpha = alpha)
+    })
     })
   })
 
@@ -568,6 +574,7 @@ monte_carlo_server <- function(id) {
 
   mc_est_data <- reactiveVal(NULL)
   observeEvent(input$mc_est_run, {
+    withProgress(message = "Running Monte Carlo estimation...", value = 0.1, {
     mc_est_data({
     n      <- input$mc_est_n
     target <- input$mc_est_target
@@ -619,6 +626,7 @@ monte_carlo_server <- function(id) {
       list(target = target, maxes = maxes, hits = hits,
            estimate = estimate, truth = truth, cum_est = cum_est, n = n)
     }
+    })
     })
   })
 
@@ -784,6 +792,7 @@ monte_carlo_server <- function(id) {
 
   mc_pow_data <- reactiveVal(NULL)
   observeEvent(input$mc_pow_run, {
+    withProgress(message = "Simulating power curves...", value = 0.1, {
     mc_pow_data({
     effect <- input$mc_pow_effect
     alpha  <- input$mc_pow_alpha
@@ -827,8 +836,10 @@ monte_carlo_server <- function(id) {
     above_80 <- pow_df$n[pow_df$power >= 0.80]
     n_80 <- if (length(above_80) > 0) min(above_80) else NA
 
+    setProgress(1)
     list(pow_df = pow_df, effect = effect, alpha = alpha, test = test,
          nsims = nsims, n_80 = n_80)
+    })
     })
   })
 

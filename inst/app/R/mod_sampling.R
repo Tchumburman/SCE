@@ -256,6 +256,7 @@ sampling_server <- function(id) {
   size_data <- reactiveVal(NULL)
   
   observeEvent(input$size_go, {
+    withProgress(message = "Computing sample sizes...", value = 0.1, {
     n1 <- input$size_n1; n2 <- input$size_n2; pop <- input$size_pop
     means1 <- replicate(5000, mean(rpop(n1, pop)))
     means2 <- replicate(5000, mean(rpop(n2, pop)))
@@ -265,6 +266,7 @@ sampling_server <- function(id) {
                          each = 5000),
                      levels = c(paste0("n = ", n1), paste0("n = ", n2)))
     ))
+    })
   })
   
   output$size_plot <- plotly::renderPlotly({
@@ -311,6 +313,7 @@ sampling_server <- function(id) {
   method_result <- reactiveVal(NULL)
   
   observeEvent(input$method_draw, {
+    withProgress(message = "Drawing sample...", value = 0.1, {
     df <- pop_df()
     n <- min(input$method_n, nrow(df))
   
@@ -347,6 +350,7 @@ sampling_server <- function(id) {
   
     df$sampled <- seq_len(nrow(df)) %in% idx
     method_result(df)
+    })
   })
   
   output$method_plot <- plotly::renderPlotly({
