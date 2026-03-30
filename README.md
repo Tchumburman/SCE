@@ -1,22 +1,93 @@
-# Statistical Concepts Explorer — v1.2.1
+# Statistical Concepts Explorer
 
-An interactive Shiny application for building intuition about statistical concepts through visualization and simulation. Built with [bslib](https://rstudio.github.io/bslib/) (Bootstrap 5) and [plotly](https://plotly.com/r/) for a modern, responsive interface with dark/light mode support.
+**An interactive learning tool for statistics, built entirely in R.**
+
+Statistical Concepts Explorer is a Shiny application that helps students, researchers, and practitioners build intuition about statistical concepts through hands-on visualization and simulation. Every concept comes with interactive controls, real-time plots, and plain-language explanations — no datasets required, everything is generated on the fly.
+
+Whether you're a psychology student encountering ANOVA for the first time, a researcher brushing up on Bayesian methods, or a psychometrician working with IRT models, the app covers the full spectrum from introductory to expert-level topics. Each topic is rated by difficulty (1–5) and linked to related concepts so you always know where to go next.
 
 Developed by [Psycholo.ge](https://psycholo.ge) — Everything About Psychology.
 
 ---
 
-## Features
+## Installation
+
+### Option A: Standalone Installer (no R needed)
+
+The easiest way to get started. The installer bundles its own copy of R and all required packages — just download, install, and run.
+
+**[⬇ Download the installer (v1.2.1)](https://github.com/Tchumburman/SCE/releases/latest)**
+
+1. Go to the [Releases](https://github.com/Tchumburman/SCE/releases/latest) page
+2. Download **StatisticalConceptsExplorer_Setup_v1.2.1.exe** (~393 MB)
+3. Run the installer — it will create a Start Menu and optional desktop shortcut
+4. Launch from the shortcut; the app opens in your default browser
+
+> The installer requires Windows 10 or later. No admin privileges needed — it installs to your user AppData folder.
+
+### Option B: Run from R / RStudio
+
+If you already have R installed, you can run the app directly from source.
+
+**Requirements:** R 4.4.0 or later.
+
+**Step 1.** Clone or download this repository:
+
+```bash
+git clone https://github.com/Tchumburman/SCE.git
+```
+
+Or click the green **Code** button above → **Download ZIP**, then extract.
+
+**Step 2.** Install required packages (one-time setup):
+
+```r
+install.packages(c(
+  "shiny", "bslib", "ggplot2", "plotly",
+  "lavaan", "MASS", "GPArotation", "rpart", "randomForest",
+  "class", "e1071", "nnet", "RColorBrewer", "gridExtra",
+  "glmnet", "lme4", "cluster", "scales", "readxl",
+  "forecast", "wordcloud", "tidytext"
+))
+```
+
+Some modules also use these packages via `::` — install them if a module throws an error:
+
+```r
+install.packages(c("survival", "igraph"))
+```
+
+(`splines` and `grDevices` ship with base R and do not need installation.)
+
+**Step 3.** Run the app:
+
+```r
+# From within the project directory:
+shiny::runApp()
+
+# Or from a parent directory:
+shiny::runApp("SCE")
+```
+
+The app launches in your default browser.
+
+---
+
+## What's Inside
+
+### Features
 
 - **65 interactive modules** across 8 topic areas (~56,000 lines of R)
 - **436 interactive plots** powered by ggplot2 and plotly
 - **306 quiz questions** with explanations for self-assessment
-- **Dark/light mode** with Solarized-themed styling and instant client-side toggle
+- **Topic difficulty ratings** (1–5) and cross-linked related topics on every page
+- **"Don't know where to start?"** — a guided beginner learning path on the welcome page
+- **Dark/light mode** with Solarized-themed styling and instant toggle
 - **Guided learning mode** that auto-expands educational explanations
 - **Statistical test selector** — answer questions about your data to get method recommendations
 - **User data upload** — explore your own CSV/Excel data within the app
 
-## Topic Areas
+### Topic Areas
 
 | Area | Modules | Topics |
 |------|---------|--------|
@@ -29,45 +100,7 @@ Developed by [Psycholo.ge](https://psycholo.ge) — Everything About Psychology.
 | **Machine Learning** | 3 | Decision trees, random forests, KNN, SVM, neural networks, model evaluation, AI/LLM internals |
 | **Psychometrics** | 10 | IRT (1–3PL, polytomous, MIRT), Rasch, reliability, scoring, fairness/DIF, equating, CAT, validity, large-scale assessment |
 
-## Requirements
-
-**R version**: 4.4.0 or later recommended.
-
-**Required packages** (install before first run):
-
-```r
-install.packages(c(
-  "shiny", "bslib", "ggplot2", "plotly",
-  "lavaan", "MASS", "GPArotation", "rpart", "randomForest",
-  "class", "e1071", "nnet", "RColorBrewer", "gridExtra",
-  "glmnet", "lme4", "cluster", "scales", "readxl",
-  "forecast", "wordcloud", "tidytext"
-))
-```
-
-Additional packages used via `::` (install if the relevant module throws an error):
-
-```r
-install.packages(c("splines", "survival", "igraph"))
-```
-
-(`splines` and `grDevices` ship with base R and do not need installation.)
-
-## Running the App
-
-Open the project in RStudio and run:
-
-```r
-shiny::runApp("Statistical_Concepts_Explorer")
-```
-
-Or from within the project directory:
-
-```r
-shiny::runApp()
-```
-
-The app launches in your default browser. Use the navigation bar to browse topic areas, or start from the welcome page which provides an overview of all modules.
+---
 
 ## Project Structure
 
@@ -81,6 +114,8 @@ Statistical_Concepts_Explorer/
 │   ├── mod_*.R        # One file per module (UI + server functions)
 │   └── ...
 ├── www/
+│   ├── app.js         # Client-side JS (dark mode, guided mode, navbar)
+│   ├── style.css      # Custom styles
 │   └── logo.png       # App logo
 ├── manifest.json      # Deployment manifest
 └── rsconnect/         # Deployment configuration
@@ -91,10 +126,10 @@ Each module file (`mod_*.R`) defines a `*_ui()` and `*_server()` function pair u
 ## Architecture Notes
 
 - **No external data files** — all data is generated via simulation within each module, making the app fully self-contained.
-- **Button-gated computation** — expensive simulations are triggered by action buttons rather than re-running on every slider change. Modules auto-fire once on load via `session$onFlushed()`.
-- **Client-side dark mode** — theme switching is handled entirely in JavaScript by toggling `data-bs-theme` on the `<html>` element, with plotly charts restyled via `Plotly.relayout()`.
+- **Lazy module loading** — module servers are initialized only when the user first visits a tab, keeping startup fast.
+- **Button-gated computation** — expensive simulations are triggered by action buttons rather than re-running on every slider change.
+- **Client-side dark mode** — theme switching is handled entirely in JavaScript by toggling `data-bs-theme` on the `<html>` element.
 - **Guided learning mode** — a `MutationObserver` watches for tab changes and auto-expands explanation accordions when guided mode is active.
-- **Responsive navbar** — collapses at 1400px (xxl breakpoint) with pinned utility icons (quiz, upload, test selector, references, guided mode, dark mode) that remain visible outside the hamburger menu.
 
 ## Changelog
 
