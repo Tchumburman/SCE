@@ -64,7 +64,7 @@ welcome_ui <- nav_panel_hidden(
                   class = "suggested-topic-pill",
                   style = "cursor: pointer;",
                   onclick = sprintf(
-                    "event.stopPropagation(); Shiny.setInputValue('go_to_page', '%s', {priority: 'event'}); window.scrollTo(0, 0);",
+                    "event.stopPropagation(); Shiny.setInputValue('go_to_page', '%s', {priority: 'event'}); setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 150);",
                     topic
                   ),
                   icon("arrow-right", class = "me-1",
