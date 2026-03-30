@@ -4,4 +4,6 @@
 .Ruserdata
 rsconnect/
 nul
+R_backup/
+.positai/
 .positai/

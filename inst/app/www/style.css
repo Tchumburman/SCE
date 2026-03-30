@@ -1,0 +1,266 @@
+/* ---- Topic difficulty dots ---- */
+.topic-difficulty {
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* ---- Related topic pills ---- */
+.related-topics {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.related-label {
+  font-size: 0.72rem;
+  color: #6c757d;
+  font-weight: 600;
+  margin-right: 0.1rem;
+}
+.related-topic-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(38, 139, 210, 0.10);
+  color: #268bd2;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.related-topic-pill:hover {
+  background: #268bd2;
+  color: #fff;
+}
+[data-bs-theme='dark'] .related-topic-pill {
+  background: rgba(38, 139, 210, 0.20);
+  color: #6cb4e0;
+}
+[data-bs-theme='dark'] .related-topic-pill:hover {
+  background: #268bd2;
+  color: #fff;
+}
+[data-bs-theme='dark'] .related-label {
+  color: #93a1a1;
+}
+
+/* ---- Suggested topic pills (welcome page) ---- */
+.suggested-topic-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(181, 137, 0, 0.08);
+  border: 1px solid rgba(181, 137, 0, 0.20);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  white-space: nowrap;
+}
+.suggested-topic-pill:hover {
+  background: rgba(181, 137, 0, 0.18);
+  border-color: rgba(181, 137, 0, 0.35);
+  transform: translateY(-1px);
+}
+[data-bs-theme='dark'] .suggested-topic-pill {
+  background: rgba(181, 137, 0, 0.12);
+  border-color: rgba(181, 137, 0, 0.25);
+}
+[data-bs-theme='dark'] .suggested-topic-pill:hover {
+  background: rgba(181, 137, 0, 0.22);
+  border-color: rgba(181, 137, 0, 0.40);
+}
+
+/* ---- Topic page header (inside module pages) ---- */
+.topic-page-header {
+  padding: 0.5rem 0.85rem;
+  margin-bottom: 0.6rem;
+  border-radius: 8px;
+  background: rgba(38, 139, 210, 0.05);
+  border: 1px solid rgba(38, 139, 210, 0.12);
+}
+[data-bs-theme='dark'] .topic-page-header {
+  background: rgba(38, 139, 210, 0.08);
+  border-color: rgba(38, 139, 210, 0.18);
+}
+
+/* ---- Smooth transition for color-mode switch ---- */
+body, .navbar {
+  transition: background-color 0.15s ease, color 0.15s ease,
+              border-color 0.15s ease;
+}
+
+.nav-card-hover { transition: box-shadow 0.2s, transform 0.15s; }
+.nav-card-hover:hover { box-shadow: 0 4px 16px rgba(38,139,210,0.18); transform: translateY(-2px); }
+[data-bs-theme='dark'] .nav-card-hover:hover {
+  box-shadow: 0 4px 20px rgba(38,139,210,0.30);
+}
+
+/* ---- Loading spinner for recalculating plots ---- */
+.plotly.recalculating, .shiny-plot-recalculating {
+  opacity: 0.35;
+  transition: opacity 0.2s ease;
+}
+.plotly.recalculating::after, .shiny-plot-recalculating::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 32px; height: 32px;
+  margin: -16px 0 0 -16px;
+  border: 3px solid rgba(38,139,210,0.2);
+  border-top-color: #268bd2;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  z-index: 100;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Table base reset ---- */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(0, 0, 0, 0.03);
+  --bs-table-hover-bg: rgba(0, 0, 0, 0.05);
+  --bs-table-color: inherit;
+  --bs-table-border-color: rgba(0, 0, 0, 0.12);
+}
+.table td, .table th,
+.table>:not(caption)>*>* {
+  box-shadow: none !important;
+  background-color: var(--bs-table-bg) !important;
+}
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+  background-color: var(--bs-table-striped-bg) !important;
+}
+[data-bs-theme='dark'] .table {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(147, 161, 161, 0.05);
+  --bs-table-hover-bg: rgba(147, 161, 161, 0.08);
+  --bs-table-color: #839496;
+  --bs-table-border-color: rgba(147, 161, 161, 0.15);
+}
+
+/* ---- Dark-mode toggle styling ---- */
+.dark-mode-toggle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 12px; cursor: pointer;
+}
+.dark-mode-toggle .form-check-input {
+  width: 2.2em; height: 1.1em; cursor: pointer;
+}
+
+/* ---- Guided learning mode ---- */
+.guided-mode .border-info {
+  border-width: 2px !important;
+  border-color: var(--bs-info) !important;
+  box-shadow: 0 0 8px rgba(42, 161, 152, 0.20);
+}
+.guided-mode-banner {
+  display: none;
+  background: linear-gradient(135deg, #073642 0%, #002b36 100%);
+  color: #93a1a1;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-bottom: 2px solid #2aa198;
+}
+.guided-mode .guided-mode-banner { display: block; }
+[data-bs-theme='dark'] .guided-mode .border-info {
+  box-shadow: 0 0 10px rgba(42, 161, 152, 0.25);
+}
+
+/* ---- Scrollbar theming ---- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(101,115,131,0.35) transparent;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(101,115,131,0.35);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(101,115,131,0.55); }
+
+[data-bs-theme='dark'] * {
+  scrollbar-color: rgba(147,161,161,0.3) transparent;
+}
+[data-bs-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(147,161,161,0.3);
+}
+[data-bs-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(147,161,161,0.5);
+}
+
+/* ---- Plotly transparent backgrounds ---- */
+.plotly .main-svg { background: transparent !important; }
+.js-plotly-plot .plotly .modebar { background: transparent !important; }
+.plotly .legend .bg { fill: transparent !important; }
+
+/* ---- Prevent navbar items from ever wrapping to a second line ---- */
+.navbar-nav {
+  flex-wrap: nowrap;
+}
+.navbar-nav .nav-link,
+.navbar-nav .dropdown-toggle {
+  white-space: nowrap;
+}
+
+/* ---- Pinned right-side icons: always outside collapse, right-aligned ---- */
+.navbar-pinned-group {
+  display: flex !important;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  margin-left: auto;
+  order: 10;
+}
+
+/* ---- Responsive navbar: collapse at xxl (1400px) instead of md ---- */
+@media (max-width: 1399.98px) {
+  /* Show toggler; JS moves it right after the brand (home icon) */
+  .navbar-expand-md .navbar-toggler {
+    display: flex !important;
+    margin-left: 6px !important;
+  }
+  /* flex-start so nothing pushes the toggler back to the right;
+     pinned group keeps margin-left:auto and stays right-aligned. */
+  .navbar-expand-md > .container,
+  .navbar-expand-md > .container-fluid,
+  .navbar-expand-md > .container-sm,
+  .navbar-expand-md > .container-md,
+  .navbar-expand-md > .container-lg,
+  .navbar-expand-md > .container-xl {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+  .navbar-expand-md .navbar-collapse {
+    display: none !important;
+    flex-basis: 100%;
+    width: 100%;
+    order: 3;
+  }
+  .navbar-expand-md .navbar-collapse.show,
+  .navbar-expand-md .navbar-collapse.collapsing {
+    display: block !important;
+  }
+  .navbar-expand-md .navbar-nav {
+    flex-direction: column !important;
+  }
+}
+
+/* ---- "Press [button] to get started" banners ---- */
+.start-hint {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  color: var(--bs-secondary-color, #657b83);
+  font-size: 0.88rem;
+  background: var(--bs-tertiary-bg, rgba(0,0,0,0.025));
+  border-radius: 0.5rem;
+  border: 1px dashed var(--bs-border-color, #dee2e6);
+}

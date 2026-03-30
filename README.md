@@ -25,51 +25,27 @@ The easiest way to get started. The installer bundles its own copy of R and all 
 
 > The installer requires Windows 10 or later. No admin privileges needed — it installs to your user AppData folder.
 
-### Option B: Run from R / RStudio
+### Option B: Install as an R package
 
-If you already have R installed, you can run the app directly from source.
+If you already have R (4.4.0+) installed, you can install the app as a package and launch it with one command.
 
-**Requirements:** R 4.4.0 or later.
-
-**Step 1.** Clone or download this repository:
-
-```bash
-git clone https://github.com/Tchumburman/SCE.git
-```
-
-Or click the green **Code** button above → **Download ZIP**, then extract.
-
-**Step 2.** Install required packages (one-time setup):
+**Step 1.** Install the package from GitHub (one-time):
 
 ```r
-install.packages(c(
-  "shiny", "bslib", "ggplot2", "plotly",
-  "lavaan", "MASS", "GPArotation", "rpart", "randomForest",
-  "class", "e1071", "nnet", "RColorBrewer", "gridExtra",
-  "glmnet", "lme4", "cluster", "scales", "readxl",
-  "forecast", "wordcloud", "tidytext"
-))
+# install.packages("remotes")   # if you don't have remotes yet
+remotes::install_github("Tchumburman/SCE")
 ```
 
-Some modules also use these packages via `::` — install them if a module throws an error:
+This installs the app and all required dependencies automatically.
+
+**Step 2.** Run the app:
 
 ```r
-install.packages(c("survival", "igraph"))
+library(SCE)
+run_app()
 ```
 
-(`splines` and `grDevices` ship with base R and do not need installation.)
-
-**Step 3.** Run the app:
-
-```r
-# From within the project directory:
-shiny::runApp()
-
-# Or from a parent directory:
-shiny::runApp("SCE")
-```
-
-The app launches in your default browser.
+The app launches in your default browser. That's it.
 
 ---
 
@@ -105,20 +81,25 @@ The app launches in your default browser.
 ## Project Structure
 
 ```
-Statistical_Concepts_Explorer/
-├── app.R              # Main UI assembly (navbar, welcome page, server wiring)
-├── global.R           # Package loading (runs before R/ modules are sourced)
-├── R/                 # 67 module files, auto-sourced by Shiny
-│   ├── 00_topic_metadata.R  # Difficulty ratings & related topics for all modules
-│   ├── helpers.R      # Shared UI components (nav_card, explanation_box, etc.)
-│   ├── mod_*.R        # One file per module (UI + server functions)
-│   └── ...
+SCE/
+├── DESCRIPTION           # R package metadata & dependencies
+├── NAMESPACE             # Exported function (run_app)
+├── LICENSE
+├── R/
+│   └── run_app.R         # run_app() — the package entry point
+├── inst/app/             # The Shiny app (bundled with the package)
+│   ├── app.R             # Main UI assembly (navbar, welcome page, server wiring)
+│   ├── global.R          # Package loading (runs before R/ modules are sourced)
+│   ├── R/                # 67 module files, auto-sourced by Shiny
+│   │   ├── 00_topic_metadata.R  # Difficulty ratings & related topics
+│   │   ├── helpers.R     # Shared UI components
+│   │   ├── mod_*.R       # One file per module (UI + server)
+│   │   └── ...
+│   └── www/              # Static assets (JS, CSS, logo)
+├── app.R                 # Also works with shiny::runApp() directly
+├── global.R
 ├── www/
-│   ├── app.js         # Client-side JS (dark mode, guided mode, navbar)
-│   ├── style.css      # Custom styles
-│   └── logo.png       # App logo
-├── manifest.json      # Deployment manifest
-└── rsconnect/         # Deployment configuration
+└── README.md
 ```
 
 Each module file (`mod_*.R`) defines a `*_ui()` and `*_server()` function pair using Shiny's `moduleServer()` pattern with proper namespace isolation (`NS()`). Modules are self-contained: each generates its own simulated data, builds its own plots, and renders its own educational text.

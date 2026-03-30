@@ -1,0 +1,41 @@
+Package: SCE
+Title: Statistical Concepts Explorer
+Version: 1.2.1
+Authors@R: person("Psycholo.ge", role = c("aut", "cre"),
+                  email = "contact@psycholo.ge")
+Description: An interactive Shiny application for building intuition about
+    statistical concepts through visualization and simulation. Covers 65+
+    modules spanning distributions, inference, modeling, multivariate methods,
+    machine learning, and psychometrics.
+License: file LICENSE
+URL: https://github.com/Tchumburman/SCE, https://psycholo.ge
+BugReports: https://github.com/Tchumburman/SCE/issues
+Depends: R (>= 4.4.0)
+Imports:
+    shiny,
+    bslib,
+    ggplot2,
+    plotly,
+    lavaan,
+    MASS,
+    GPArotation,
+    rpart,
+    randomForest,
+    class,
+    e1071,
+    nnet,
+    RColorBrewer,
+    gridExtra,
+    glmnet,
+    lme4,
+    cluster,
+    scales,
+    readxl,
+    forecast,
+    wordcloud,
+    tidytext
+Suggests:
+    survival,
+    igraph
+Encoding: UTF-8
+RoxygenNote: 7.3.2
