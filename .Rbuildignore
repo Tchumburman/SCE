@@ -1,0 +1,17 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^rsconnect$
+^manifest\.json$
+^\.rconnectignore$
+^R_backup$
+^nul$
+^\.positai$
+# Exclude Shiny module files from package R/ — they live in inst/app/R/
+^R/00_topic_metadata\.R$
+^R/helpers\.R$
+^R/mod_.*\.R$
+^R/utils_.*\.R$
+# Root app files (package uses inst/app/ instead)
+^app\.R$
+^global\.R$
+^www$
