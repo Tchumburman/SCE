@@ -16,10 +16,10 @@ Developed by [Psycholo.ge](https://psycholo.ge) — Everything About Psychology.
 
 The easiest way to get started. The installer bundles its own copy of R and all required packages — just download, install, and run.
 
-**[⬇ Download the installer (v1.2.1)](https://github.com/Tchumburman/SCE/releases/latest)**
+**[⬇ Download the installer (v1.2.2)](https://github.com/Tchumburman/SCE/releases/latest)**
 
 1. Go to the [Releases](https://github.com/Tchumburman/SCE/releases/latest) page
-2. Download **StatisticalConceptsExplorer_Setup_v1.2.1.exe** (~393 MB)
+2. Download **StatisticalConceptsExplorer_Setup_v1.2.2.exe** (~393 MB)
 3. Run the installer — it will create a Start Menu and optional desktop shortcut
 4. Launch from the shortcut; the app opens in your default browser
 
@@ -113,6 +113,12 @@ Each module file (`mod_*.R`) defines a `*_ui()` and `*_server()` function pair u
 - **Guided learning mode** — a `MutationObserver` watches for tab changes and auto-expands explanation accordions when guided mode is active.
 
 ## Changelog
+
+### v1.2.2
+
+- R package structure — install via `remotes::install_github("Tchumburman/SCE")`, then `library(SCE); run_app()`
+- Fixed navbar dropdowns staying open when navigating from related topic pills and beginner path suggestions
+- Updated README with standalone installer and R package installation instructions
 
 ### v1.2.1
 

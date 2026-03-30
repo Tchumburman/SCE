@@ -1,5 +1,5 @@
 # ===========================================================================
-# Statistical Concepts Explorer — v1.2.1
+# Statistical Concepts Explorer — v1.2.2
 # All module files in R/ are sourced automatically by Shiny.
 # ===========================================================================
 
@@ -388,7 +388,7 @@ welcome_ui <- nav_panel_hidden(
              "Psycholo.ge"),
       " \u2014 Everything About Psychology",
       tags$br(),
-      tags$span(style = "font-size: 0.75rem;", "v1.2.1")
+      tags$span(style = "font-size: 0.75rem;", "v1.2.2")
     )
   )
 )

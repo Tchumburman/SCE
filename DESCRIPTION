@@ -1,6 +1,6 @@
 Package: SCE
 Title: Statistical Concepts Explorer
-Version: 1.2.1
+Version: 1.2.2
 Authors@R: person("Psycholo.ge", role = c("aut", "cre"),
                   email = "contact@psycholo.ge")
 Description: An interactive Shiny application for building intuition about
