@@ -33,6 +33,103 @@ references_ui <- function(id) {
     ),
 
     # =====================================================================
+    # GENERAL CONCEPTS
+    # =====================================================================
+    tags$h4(class = "mt-4 mb-3 text-primary",
+            icon("lightbulb"), " General Concepts"),
+
+    # -- Measurement Fundamentals --
+    ref_section("Measurement Fundamentals", "ruler-horizontal", c(
+      'Stevens, S. S. (1946). On the theory of scales of measurement. <em>Science, 103</em>(2684), 677&ndash;680.',
+      'Messick, S. (1989). Validity. In R. L. Linn (Ed.), <em>Educational measurement</em> (3rd ed., pp. 13&ndash;103). American Council on Education/Macmillan.',
+      'Messick, S. (1995). Validity of psychological assessment: Validation of inferences from persons&rsquo; responses and performances as scientific inquiry into score meaning. <em>American Psychologist, 50</em>(9), 741&ndash;749.',
+      'Cronbach, L. J. (1951). Coefficient alpha and the internal structure of tests. <em>Psychometrika, 16</em>(3), 297&ndash;334.',
+      'Campbell, D. T., &amp; Fiske, D. W. (1959). Convergent and discriminant validation by the multitrait-multimethod matrix. <em>Psychological Bulletin, 56</em>(2), 81&ndash;105.',
+      'Lynn, M. R. (1986). Determination and quantification of content validity. <em>Nursing Research, 35</em>(6), 382&ndash;385.',
+      'Cohen, J. (1960). A coefficient of agreement for nominal scales. <em>Educational and Psychological Measurement, 20</em>(1), 37&ndash;46.',
+      'Landis, J. R., &amp; Koch, G. G. (1977). The measurement of observer agreement for categorical data. <em>Biometrics, 33</em>(1), 159&ndash;174.',
+      'Nunnally, J. C., &amp; Bernstein, I. H. (1994). <em>Psychometric theory</em> (3rd ed.). McGraw-Hill.'
+    )),
+
+    # -- Data Quality --
+    ref_section("Data Quality", "eye-slash", c(
+      'Little, R. J. A., &amp; Rubin, D. B. (2019). <em>Statistical analysis with missing data</em> (3rd ed.). John Wiley &amp; Sons.',
+      'van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (2nd ed.). Chapman &amp; Hall/CRC. https://stefvanbuuren.name/fimd/',
+      'Rubin, D. B. (1976). Inference and missing data. <em>Biometrika, 63</em>(3), 581&ndash;592.',
+      'Barnett, V., &amp; Lewis, T. (1994). <em>Outliers in statistical data</em> (3rd ed.). John Wiley &amp; Sons.'
+    )),
+
+    # -- Multiple Imputation --
+    ref_section("Multiple Imputation", "fill-drip", c(
+      'Rubin, D. B. (1987). <em>Multiple imputation for nonresponse in surveys.</em> John Wiley &amp; Sons.',
+      'van Buuren, S., &amp; Groothuis-Oudshoorn, K. (2011). mice: Multivariate imputation by chained equations in R. <em>Journal of Statistical Software, 45</em>(3), 1&ndash;67.',
+      'van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (2nd ed.). Chapman &amp; Hall/CRC.'
+    )),
+
+    # -- Statistical Phenomena --
+    ref_section("Statistical Phenomena", "arrows-split-up-and-left", c(
+      'Simpson, E. H. (1951). The interpretation of interaction in contingency tables. <em>Journal of the Royal Statistical Society: Series B, 13</em>(2), 238&ndash;241.',
+      'Galton, F. (1886). Regression towards mediocrity in hereditary stature. <em>Journal of the Anthropological Institute of Great Britain and Ireland, 15</em>, 246&ndash;263.',
+      'Pearl, J., Glymour, M., &amp; Jewell, N. P. (2016). <em>Causal inference in statistics: A primer.</em> John Wiley &amp; Sons.'
+    )),
+
+    # -- Data Preparation --
+    ref_section("Data Preparation", "wand-magic-sparkles", c(
+      'Box, G. E. P., &amp; Cox, D. R. (1964). An analysis of transformations. <em>Journal of the Royal Statistical Society: Series B, 26</em>(2), 211&ndash;252.',
+      'Tukey, J. W. (1977). <em>Exploratory data analysis.</em> Addison-Wesley.',
+      'Wickham, H. (2014). Tidy data. <em>Journal of Statistical Software, 59</em>(10), 1&ndash;23.'
+    )),
+
+    # -- Visualization Principles --
+    ref_section("Visualization Principles", "palette", c(
+      'Cleveland, W. S., &amp; McGill, R. (1984). Graphical perception: Theory, experimentation, and application to the development of graphical methods. <em>Journal of the American Statistical Association, 79</em>(387), 531&ndash;554.',
+      'Tufte, E. R. (2001). <em>The visual display of quantitative information</em> (2nd ed.). Graphics Press.',
+      'Wilke, C. O. (2019). <em>Fundamentals of data visualization: A primer on making informative and compelling figures.</em> O&rsquo;Reilly Media. https://clauswilke.com/dataviz/',
+      'Wickham, H. (2016). <em>ggplot2: Elegant graphics for data analysis</em> (2nd ed.). Springer. https://ggplot2-book.org/',
+      'Few, S. (2012). <em>Show me the numbers: Designing tables and graphs to enlighten</em> (2nd ed.). Analytics Press.'
+    )),
+
+    # -- Game Theory --
+    ref_section("Game Theory", "chess", c(
+      'von Neumann, J., &amp; Morgenstern, O. (1944). <em>Theory of games and economic behavior.</em> Princeton University Press.',
+      'Nash, J. F. (1950). Equilibrium points in <em>n</em>-person games. <em>Proceedings of the National Academy of Sciences, 36</em>(1), 48&ndash;49.',
+      'Axelrod, R. (1984). <em>The evolution of cooperation.</em> Basic Books.',
+      'Maynard Smith, J. (1982). <em>Evolution and the theory of games.</em> Cambridge University Press.',
+      'Osborne, M. J. (2004). <em>An introduction to game theory.</em> Oxford University Press.'
+    )),
+
+    # -- Information Theory --
+    ref_section("Information Theory", "infinity", c(
+      'Shannon, C. E. (1948). A mathematical theory of communication. <em>Bell System Technical Journal, 27</em>(3), 379&ndash;423.',
+      'Cover, T. M., &amp; Thomas, J. A. (2006). <em>Elements of information theory</em> (2nd ed.). John Wiley &amp; Sons.',
+      'Kullback, S., &amp; Leibler, R. A. (1951). On information and sufficiency. <em>Annals of Mathematical Statistics, 22</em>(1), 79&ndash;86.'
+    )),
+
+    # -- Signal Detection Theory --
+    ref_section("Signal Detection Theory", "satellite-dish", c(
+      'Green, D. M., &amp; Swets, J. A. (1966). <em>Signal detection theory and psychophysics.</em> John Wiley &amp; Sons.',
+      'Macmillan, N. A., &amp; Creelman, C. D. (2005). <em>Detection theory: A user&rsquo;s guide</em> (2nd ed.). Lawrence Erlbaum Associates.',
+      'Stanislaw, H., &amp; Todorov, N. (1999). Calculation of signal detection theory measures. <em>Behavior Research Methods, Instruments, &amp; Computers, 31</em>(1), 137&ndash;149.'
+    )),
+
+    # -- Interrater Reliability --
+    ref_section("Interrater Reliability", "users-between-lines", c(
+      'Cohen, J. (1960). A coefficient of agreement for nominal scales. <em>Educational and Psychological Measurement, 20</em>(1), 37&ndash;46.',
+      'Fleiss, J. L. (1971). Measuring nominal scale agreement among many raters. <em>Psychological Bulletin, 76</em>(5), 378&ndash;382.',
+      'Landis, J. R., &amp; Koch, G. G. (1977). The measurement of observer agreement for categorical data. <em>Biometrics, 33</em>(1), 159&ndash;174.',
+      'Cicchetti, D. V., &amp; Feinstein, A. R. (1990). High agreement but low kappa: II. Resolving the paradoxes. <em>Journal of Clinical Epidemiology, 43</em>(6), 551&ndash;558.'
+    )),
+
+    # -- Text Analysis --
+    ref_section("Text Analysis", "file-word", c(
+      'Flesch, R. (1948). A new readability yardstick. <em>Journal of Applied Psychology, 32</em>(3), 221&ndash;233.',
+      'Gunning, R. (1952). <em>The technique of clear writing.</em> McGraw-Hill.',
+      'Silge, J., &amp; Robinson, D. (2017). <em>Text mining with R: A tidy approach.</em> O&rsquo;Reilly Media. https://www.tidytextmining.com/',
+      'Hu, M., &amp; Liu, B. (2004). Mining and summarizing customer reviews. In <em>Proceedings of the 10th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em> (pp. 168&ndash;177). ACM.',
+      'Nielsen, F. &Aring;. (2011). A new ANEW: Evaluation of a word list for sentiment analysis in microblogs. In <em>Proceedings of the ESWC2011 Workshop on Making Sense of Microposts</em> (pp. 93&ndash;98).'
+    )),
+
+    # =====================================================================
     # DISTRIBUTIONS
     # =====================================================================
     tags$h4(class = "mt-4 mb-3 text-primary",
@@ -465,90 +562,6 @@ references_ui <- function(id) {
       'von Davier, M., Gonzalez, E., &amp; Mislevy, R. J. (2009). What are plausible values and why are they useful? In M. von Davier &amp; D. Hastedt (Eds.), <em>IERI Monograph Series</em> (Vol. 2, pp. 9&ndash;36). IEA-ETS Research Institute.',
       'Cizek, G. J., &amp; Bunch, M. B. (2007). <em>Standard setting: A guide to establishing and evaluating performance standards on tests.</em> SAGE Publications.',
       'van der Linden, W. J. (2006). A lognormal model for response times on test items. <em>Journal of Educational and Behavioral Statistics, 31</em>(2), 181&ndash;204.'
-    )),
-
-    # =====================================================================
-    # GENERAL CONCEPTS
-    # =====================================================================
-    tags$h4(class = "mt-4 mb-3 text-primary",
-            icon("lightbulb"), " General Concepts"),
-
-    # -- Data Quality --
-    ref_section("Data Quality", "eye-slash", c(
-      'Little, R. J. A., &amp; Rubin, D. B. (2019). <em>Statistical analysis with missing data</em> (3rd ed.). John Wiley &amp; Sons.',
-      'van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (2nd ed.). Chapman &amp; Hall/CRC. https://stefvanbuuren.name/fimd/',
-      'Rubin, D. B. (1976). Inference and missing data. <em>Biometrika, 63</em>(3), 581&ndash;592.',
-      'Barnett, V., &amp; Lewis, T. (1994). <em>Outliers in statistical data</em> (3rd ed.). John Wiley &amp; Sons.'
-    )),
-
-    # -- Multiple Imputation --
-    ref_section("Multiple Imputation", "fill-drip", c(
-      'Rubin, D. B. (1987). <em>Multiple imputation for nonresponse in surveys.</em> John Wiley &amp; Sons.',
-      'van Buuren, S., &amp; Groothuis-Oudshoorn, K. (2011). mice: Multivariate imputation by chained equations in R. <em>Journal of Statistical Software, 45</em>(3), 1&ndash;67.',
-      'van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (2nd ed.). Chapman &amp; Hall/CRC.'
-    )),
-
-    # -- Statistical Phenomena --
-    ref_section("Statistical Phenomena", "arrows-split-up-and-left", c(
-      'Simpson, E. H. (1951). The interpretation of interaction in contingency tables. <em>Journal of the Royal Statistical Society: Series B, 13</em>(2), 238&ndash;241.',
-      'Galton, F. (1886). Regression towards mediocrity in hereditary stature. <em>Journal of the Anthropological Institute of Great Britain and Ireland, 15</em>, 246&ndash;263.',
-      'Pearl, J., Glymour, M., &amp; Jewell, N. P. (2016). <em>Causal inference in statistics: A primer.</em> John Wiley &amp; Sons.'
-    )),
-
-    # -- Data Preparation --
-    ref_section("Data Preparation", "wand-magic-sparkles", c(
-      'Box, G. E. P., &amp; Cox, D. R. (1964). An analysis of transformations. <em>Journal of the Royal Statistical Society: Series B, 26</em>(2), 211&ndash;252.',
-      'Tukey, J. W. (1977). <em>Exploratory data analysis.</em> Addison-Wesley.',
-      'Wickham, H. (2014). Tidy data. <em>Journal of Statistical Software, 59</em>(10), 1&ndash;23.'
-    )),
-
-    # -- Visualization Principles --
-    ref_section("Visualization Principles", "palette", c(
-      'Cleveland, W. S., &amp; McGill, R. (1984). Graphical perception: Theory, experimentation, and application to the development of graphical methods. <em>Journal of the American Statistical Association, 79</em>(387), 531&ndash;554.',
-      'Tufte, E. R. (2001). <em>The visual display of quantitative information</em> (2nd ed.). Graphics Press.',
-      'Wilke, C. O. (2019). <em>Fundamentals of data visualization: A primer on making informative and compelling figures.</em> O&rsquo;Reilly Media. https://clauswilke.com/dataviz/',
-      'Wickham, H. (2016). <em>ggplot2: Elegant graphics for data analysis</em> (2nd ed.). Springer. https://ggplot2-book.org/',
-      'Few, S. (2012). <em>Show me the numbers: Designing tables and graphs to enlighten</em> (2nd ed.). Analytics Press.'
-    )),
-
-    # -- Game Theory --
-    ref_section("Game Theory", "chess", c(
-      'von Neumann, J., &amp; Morgenstern, O. (1944). <em>Theory of games and economic behavior.</em> Princeton University Press.',
-      'Nash, J. F. (1950). Equilibrium points in <em>n</em>-person games. <em>Proceedings of the National Academy of Sciences, 36</em>(1), 48&ndash;49.',
-      'Axelrod, R. (1984). <em>The evolution of cooperation.</em> Basic Books.',
-      'Maynard Smith, J. (1982). <em>Evolution and the theory of games.</em> Cambridge University Press.',
-      'Osborne, M. J. (2004). <em>An introduction to game theory.</em> Oxford University Press.'
-    )),
-
-    # -- Information Theory --
-    ref_section("Information Theory", "infinity", c(
-      'Shannon, C. E. (1948). A mathematical theory of communication. <em>Bell System Technical Journal, 27</em>(3), 379&ndash;423.',
-      'Cover, T. M., &amp; Thomas, J. A. (2006). <em>Elements of information theory</em> (2nd ed.). John Wiley &amp; Sons.',
-      'Kullback, S., &amp; Leibler, R. A. (1951). On information and sufficiency. <em>Annals of Mathematical Statistics, 22</em>(1), 79&ndash;86.'
-    )),
-
-    # -- Signal Detection Theory --
-    ref_section("Signal Detection Theory", "satellite-dish", c(
-      'Green, D. M., &amp; Swets, J. A. (1966). <em>Signal detection theory and psychophysics.</em> John Wiley &amp; Sons.',
-      'Macmillan, N. A., &amp; Creelman, C. D. (2005). <em>Detection theory: A user&rsquo;s guide</em> (2nd ed.). Lawrence Erlbaum Associates.',
-      'Stanislaw, H., &amp; Todorov, N. (1999). Calculation of signal detection theory measures. <em>Behavior Research Methods, Instruments, &amp; Computers, 31</em>(1), 137&ndash;149.'
-    )),
-
-    # -- Interrater Reliability --
-    ref_section("Interrater Reliability", "users-between-lines", c(
-      'Cohen, J. (1960). A coefficient of agreement for nominal scales. <em>Educational and Psychological Measurement, 20</em>(1), 37&ndash;46.',
-      'Fleiss, J. L. (1971). Measuring nominal scale agreement among many raters. <em>Psychological Bulletin, 76</em>(5), 378&ndash;382.',
-      'Landis, J. R., &amp; Koch, G. G. (1977). The measurement of observer agreement for categorical data. <em>Biometrics, 33</em>(1), 159&ndash;174.',
-      'Cicchetti, D. V., &amp; Feinstein, A. R. (1990). High agreement but low kappa: II. Resolving the paradoxes. <em>Journal of Clinical Epidemiology, 43</em>(6), 551&ndash;558.'
-    )),
-
-    # -- Text Analysis --
-    ref_section("Text Analysis", "file-word", c(
-      'Flesch, R. (1948). A new readability yardstick. <em>Journal of Applied Psychology, 32</em>(3), 221&ndash;233.',
-      'Gunning, R. (1952). <em>The technique of clear writing.</em> McGraw-Hill.',
-      'Silge, J., &amp; Robinson, D. (2017). <em>Text mining with R: A tidy approach.</em> O&rsquo;Reilly Media. https://www.tidytextmining.com/',
-      'Hu, M., &amp; Liu, B. (2004). Mining and summarizing customer reviews. In <em>Proceedings of the 10th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em> (pp. 168&ndash;177). ACM.',
-      'Nielsen, F. &Aring;. (2011). A new ANEW: Evaluation of a word list for sentiment analysis in microblogs. In <em>Proceedings of the ESWC2011 Workshop on Making Sense of Microposts</em> (pp. 93&ndash;98).'
     )),
 
     # =====================================================================

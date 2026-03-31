@@ -124,7 +124,7 @@ theme_app <- bs_theme(
 # Clickable card for welcome page — navigates to a tab on click
 nav_card <- function(icon_name, title, description, target) {
   nav_js <- sprintf(
-    "Shiny.setInputValue('go_to_page', '%s', {priority: 'event'}); setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 150);",
+    "document.body.classList.add('nav-jumping'); Shiny.setInputValue('go_to_page', '%s', {priority: 'event'}); setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); document.body.classList.remove('nav-jumping'); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 1500);",
     target
   )
 
@@ -186,7 +186,7 @@ nav_card <- function(icon_name, title, description, target) {
 }
 
 # Shared JS to close navbar dropdowns and scroll to top after navigation
-.close_dropdown_js <- "setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 150);"
+.close_dropdown_js <- "document.body.classList.add('nav-jumping'); setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); document.body.classList.remove('nav-jumping'); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 1500);"
 
 # Banner for inside module pages (injected via insertUI in server)
 topic_page_header <- function(target) {

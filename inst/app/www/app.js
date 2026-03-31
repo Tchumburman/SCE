@@ -2,6 +2,24 @@ $(document).on('shown.bs.tab', function(e) {
   $(window).trigger('resize');
 });
 
+// ---- Suppress navbar dropdown flash during programmatic navigation ----
+// When nav-jumping is active, prevent Bootstrap from opening any dropdown.
+// Also close any that sneak through and remove the flag once the tab settles.
+document.addEventListener('show.bs.dropdown', function(e) {
+  if (document.body.classList.contains('nav-jumping')) {
+    e.preventDefault();
+  }
+}, true);
+$(document).on('shown.bs.tab', function() {
+  if (document.body.classList.contains('nav-jumping')) {
+    // Force-close anything that opened, then clear the flag
+    $('.navbar .dropdown-menu.show').removeClass('show')
+      .parent().find('.dropdown-toggle').removeClass('show')
+      .attr('aria-expanded', 'false');
+    document.body.classList.remove('nav-jumping');
+  }
+});
+
 // ---- "Press [button] to get started" banners ----
 var _hintDismissed = {};
 

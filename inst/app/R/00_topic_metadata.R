@@ -46,6 +46,10 @@ topic_meta <- list(
     difficulty = 2,
     related = c("Visualization Principles", "Dimension Reduction", "Clustering & Classification")
   ),
+  "Measurement Fundamentals" = list(
+    difficulty = 1,
+    related = c("Data Summary", "Test & Item Quality", "Interrater Reliability", "Scoring & Reporting")
+  ),
 
 
   # ── Distributions ────────────────────────────────────────────────────────

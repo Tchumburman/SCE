@@ -1,5 +1,5 @@
 # ===========================================================================
-# Statistical Concepts Explorer — v1.2.2
+# Statistical Concepts Explorer — v1.2.3
 # All module files in R/ are sourced automatically by Shiny.
 # ===========================================================================
 
@@ -51,8 +51,8 @@ welcome_ui <- nav_panel_hidden(
           tags$div(
             class = "d-flex flex-wrap gap-2",
             lapply(
-              c("Distribution Shapes", "Data Summary", "Sampling Theorems",
-                "Mean Comparisons", "Confidence & Resampling",
+              c("Measurement Fundamentals", "Distribution Shapes", "Data Summary",
+                "Sampling Theorems", "Mean Comparisons", "Confidence & Resampling",
                 "Regression Core", "Type I & II Errors"),
               function(topic) {
                 meta  <- topic_meta[[topic]]
@@ -64,7 +64,7 @@ welcome_ui <- nav_panel_hidden(
                   class = "suggested-topic-pill",
                   style = "cursor: pointer;",
                   onclick = sprintf(
-                    "event.stopPropagation(); Shiny.setInputValue('go_to_page', '%s', {priority: 'event'}); setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 150);",
+                    "event.stopPropagation(); document.body.classList.add('nav-jumping'); Shiny.setInputValue('go_to_page', '%s', {priority: 'event'}); setTimeout(function(){ document.querySelectorAll('.dropdown-menu.show').forEach(function(m){ m.classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').classList.remove('show'); m.parentElement.querySelector('.dropdown-toggle').setAttribute('aria-expanded','false'); }); document.body.classList.remove('nav-jumping'); window.scrollTo(0, 0); var tp = document.querySelector('.tab-pane.active'); if(tp) tp.scrollTop = 0; }, 1500);",
                     topic
                   ),
                   icon("arrow-right", class = "me-1",
@@ -120,7 +120,10 @@ welcome_ui <- nav_panel_hidden(
             "Interrater Reliability"),
           nav_card("file-word", "Text Analysis",
             "Word clouds, n-gram phrase analysis, readability metrics (Flesch, FK Grade, Gunning Fog), concordance (KWIC), and lexicon-based sentiment analysis (Bing & AFINN).",
-            "Text Analysis")
+            "Text Analysis"),
+          nav_card("ruler-horizontal", "Measurement Fundamentals",
+            "Nominal/ordinal/interval/ratio scales, types of validity (content, criterion, construct), and types of reliability (test-retest, \u03b1, inter-rater, parallel forms).",
+            "Measurement Fundamentals")
         )
       ),
 
@@ -388,7 +391,7 @@ welcome_ui <- nav_panel_hidden(
              "Psycholo.ge"),
       " \u2014 Everything About Psychology",
       tags$br(),
-      tags$span(style = "font-size: 0.75rem;", "v1.2.2")
+      tags$span(style = "font-size: 0.75rem;", "v1.2.3")
     )
   )
 )
@@ -422,7 +425,7 @@ ui <- page_navbar(
   nav_menu("General", icon = icon("lightbulb"),
     data_quality_ui("data_quality"), phenomena_ui("phenomena"), data_prep_ui("data_prep"),
     dataviz_ui("dataviz"), game_theory_ui("game_theory"), information_theory_ui("information_theory"), mice_ui("mice"), sdt_ui("sdt"),
-    interrater_ui("interrater"), qualitative_ui("qualitative")),
+    interrater_ui("interrater"), qualitative_ui("qualitative"), measurement_ui("measurement")),
   nav_menu("Distributions", icon = icon("chart-area"),
     distribution_shapes_ui("distribution_shapes"), sampling_theorems_ui("sampling_theorems"), data_summary_ui("data_summary")),
   nav_menu("Sampling & Design", icon = icon("object-group"),
@@ -621,6 +624,7 @@ server <- function(input, output, session) {
     "Signal Detection Theory"   = list(fn = sdt_server,                 id = "sdt"),
     "Interrater Reliability"    = list(fn = interrater_server,          id = "interrater"),
     "Text Analysis"             = list(fn = qualitative_server,         id = "qualitative"),
+    "Measurement Fundamentals"  = list(fn = measurement_server,        id = "measurement"),
     "Latent Class Analysis"     = list(fn = lca_server,                 id = "lca"),
     "Growth Mixture Models"     = list(fn = growth_mixture_server,      id = "growth_mixture"),
     "Count Data Models"         = list(fn = count_models_server,        id = "count_models"),
